@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
-import { getFoodContract, acceptFoodContract } from "../../utils/foodshare";
+import { getFoodContract, acceptFoodContract } from "../../utils/donorFund";
 
 const AcceptContract = ({ contractId, receiverId }) => {
   const [contract, setContract] = useState({});

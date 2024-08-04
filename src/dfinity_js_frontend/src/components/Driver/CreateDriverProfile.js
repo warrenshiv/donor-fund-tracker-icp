@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Button, Form } from "react-bootstrap";
-import { createDeliveryDriverProfile } from "../../utils/foodshare";
+import { createDeliveryDriverProfile } from "../../utils/donorFund";
 
 const CreateDriverProfile = ({ fetchDriverProfile }) => {
   const [name, setName] = useState("");

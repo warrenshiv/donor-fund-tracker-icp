@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { getReceiverProfileByOwner } from "../../utils/foodshare";
+import { getReceiverProfileByOwner } from "../../utils/donorFund";
 import { Notification } from "../../components/utils/Notifications";
 import Wallet from "../../components/Wallet";
 import ReceiverDashboard from "./ReceiverDashboard";

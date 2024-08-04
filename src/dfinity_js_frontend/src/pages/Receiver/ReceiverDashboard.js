@@ -8,7 +8,7 @@ import {
   getCancelledDeliveryAssignments,
   getInTransitDeliveryAssignments,
   getPendingDeliveryAssignments,
-} from "../../utils/foodshare";
+} from "../../utils/donorFund";
 import ContractsCard from "../../components/receiver/ContractsCard";
 import AllAssignments from "../../components/receiver/AllAssignments";
 import AddAssignmentPost from "../../components/receiver/AddAsignmentPost";

@@ -1,6 +1,6 @@
 import React from "react";
 import PayDriverButton from "./PayDriver";
-import { payDriver } from "../../utils/foodshare";
+import { payDriver } from "../../utils/donorFund";
 import { ToastContainer, toast } from "react-toastify";
 import 'react-toastify/dist/ReactToastify.css';
 

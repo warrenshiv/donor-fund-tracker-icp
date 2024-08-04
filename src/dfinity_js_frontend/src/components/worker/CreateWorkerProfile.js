@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Button, Form } from "react-bootstrap";
-import { createWorkerProfile } from "../../utils/foodshare";
+import { createWorkerProfile } from "../../utils/donorFund";
 
 
 const CreateWorkerProfile = ({fetchWorker}) => {

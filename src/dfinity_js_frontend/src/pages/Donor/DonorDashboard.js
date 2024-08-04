@@ -7,7 +7,7 @@ import {
   getAllFoodSurplusPosts,
   getCompletedFoodContracts,
   getAllFoodContracts,
-} from "../../utils/foodshare";
+} from "../../utils/donorFund";
 import FoodSurplusPost from "../../components/Donor/FoodSupplyPost";
 import AcceptedContracts from "../../components/Donor/AcceptedContracts";
 import CompletedContracts from "../../components/Donor/CompletedContracts";

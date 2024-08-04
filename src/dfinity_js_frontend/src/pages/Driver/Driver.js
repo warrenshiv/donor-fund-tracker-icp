@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { getDeliveryDriverProfileByOwner } from "../../utils/foodshare";
+import { getDeliveryDriverProfileByOwner } from "../../utils/donorFund";
 import { Notification } from "../../components/utils/Notifications";
 import Wallet from "../../components/Wallet";
 import DriverDashboard from "./DriverDashboard";

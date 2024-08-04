@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Image, Nav, Table, Tab } from "react-bootstrap";
-import { getAllDeliveryAssignments } from "../../utils/foodshare";
+import { getAllDeliveryAssignments } from "../../utils/donorFund";
 import AssignmentCard from "../../components/Driver/AssignmentCard";
 
 const DriverDashboard = ({ driver }) => {

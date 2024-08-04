@@ -3,7 +3,7 @@ import { Button, Modal, Card, Row, Col, Spinner } from "react-bootstrap";
 import {
   getDeliveryAssignment,
   acceptDeliveryAssignment,
-} from "../../utils/foodshare";
+} from "../../utils/donorFund";
 
 const AcceptAssignment = ({ assignmentId, driverId }) => {
   const [assignment, setAssignment] = useState({});

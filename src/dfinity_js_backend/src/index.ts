@@ -32,7 +32,7 @@ import {
 import { hashCode } from "hashcode";
 import { v4 as uuidv4 } from "uuid";
 import Donor from "../../dfinity_js_frontend/src/pages/Donor/Donor";
-import { getDonorProfile } from "../../dfinity_js_frontend/src/utils/foodshare";
+import { getDonorProfile } from "../../dfinity_js_frontend/src/utils/donorFund";
 import { title } from "process";
 import { chain } from "@dfinity/agent/lib/cjs/polling/strategy";
 import Receiver from "../../dfinity_js_frontend/src/pages/Receiver/Receiver";
@@ -261,7 +261,7 @@ export default Canister({
   ),
 
   // Function to get a Donor Profile by ID
-  getDonorProfile: query([text], Result(DonorProfile, Message), (donorId) => {
+  getDonorProfileById: query([text], Result(DonorProfile, Message), (donorId) => {
     const donorProfileOpt = donorProfileStorage.get(donorId);
 
     if ("None" in donorProfileOpt) {
@@ -406,7 +406,7 @@ export default Canister({
   ),
 
   // Function to get a Charity Profile by ID
-  getCharityProfile: query([text], Result(Charity, Message), (charityId) => {
+  getCharityProfileById: query([text], Result(Charity, Message), (charityId) => {
     const charityProfileOpt = charityProfileStorage.get(charityId);
 
     if ("None" in charityProfileOpt) {
@@ -535,7 +535,7 @@ export default Canister({
   ),
 
   // Function to get a Campaign by ID
-  getCampaign: query([text], Result(Campaign, Message), (campaignId) => {
+  getCampaignById: query([text], Result(Campaign, Message), (campaignId) => {
     const campaignOpt = campaignStorage.get(campaignId);
 
     if ("None" in campaignOpt) {
@@ -560,7 +560,7 @@ export default Canister({
   }),
 
   // Function to delete a Campaign
-  deleteCampaign: update([text], Result(Null, Message), (campaignId) => {
+  deleteCampaignById: update([text], Result(Null, Message), (campaignId) => {
     const campaignOpt = campaignStorage.get(campaignId);
 
     if ("None" in campaignOpt) {
@@ -710,6 +710,54 @@ export default Canister({
   getAddressFromPrincipal: query([Principal], text, (principal) => {
     return hexAddressFromPrincipal(principal, 0);
   }),
+
+  // Function to get all Donations with error handling
+  getAllDonations: query([], Result(Vec(Donation), Message), () => {
+    const donations = persistedReserves.values();
+
+    // Check if there are any donations
+    if (donations.length === 0) {
+      return Err({ NotFound: "No donations found" });
+    }
+
+    return Ok(donations);
+  }),
+
+  // Function to get all Donations for a Donor with error handling
+  getDonorDonations: query(
+    [text],
+    Result(Vec(Donation), Message),
+    (donorId) => {
+      const donations = persistedReserves.values().filter((donation) => {
+        return donation.donorId === donorId;
+      });
+
+      // Check if there are any donations
+      if (donations.length === 0) {
+        return Err({ NotFound: "No donations found for this donor" });
+      }
+
+      return Ok(donations);
+    }
+  ),
+
+  // Function to get all Donations for a Charity with error handling
+  getCharityDonations: query(
+    [text],
+    Result(Vec(Donation), Message),
+    (charityId) => {
+      const donations = persistedReserves.values().filter((donation) => {
+        return donation.charityId === charityId;
+      });
+
+      // Check if there are any donations
+      if (donations.length === 0) {
+        return Err({ NotFound: "No donations found for this charity" });
+      }
+
+      return Ok(donations);
+    }
+  ),
 });
 
 /*

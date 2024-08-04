@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Container, Button, Form } from "react-bootstrap";
-import { createReceiverProfile } from "../../utils/foodshare";
+import { createReceiverProfile } from "../../utils/donorFund";
 
 const CreateReceiverProfile = ({ fetchReceiverProfile }) => {
   const [name, setName] = useState("");

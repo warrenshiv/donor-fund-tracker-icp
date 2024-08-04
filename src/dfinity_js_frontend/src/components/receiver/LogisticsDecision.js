@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { updateLogisticsDecision } from "../../utils/foodshare";
+import { updateLogisticsDecision } from "../../utils/donorFund";
 
 const LogisticsDecision = ({ contractId }) => {
   const [logistics, setLogistics] = useState(null);

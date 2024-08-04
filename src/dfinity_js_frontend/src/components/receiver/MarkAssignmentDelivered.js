@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import { Button, Modal } from "react-bootstrap";
 
-import { markDeliveryAssignmentDelivered } from "../../utils/foodshare";
+import { markDeliveryAssignmentDelivered } from "../../utils/donorFund";
 
 const MarkAssignmentDelivered = ({ receiverId, assignmentId }) => {
     const [loading, setLoading] = useState(false);

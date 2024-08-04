@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import { Button, Modal } from "react-bootstrap";
-import { acceptContract, getContract } from "../../utils/foodshare";
+import { acceptContract, getContract } from "../../utils/donorFund";
 
 const TakeContract = ({contractId, workerId}) => {
 

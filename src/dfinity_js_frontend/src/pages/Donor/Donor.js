@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { createFoodSurplusPost, getDonorProfileByOwner } from "../../utils/foodshare"; 
+import { createFoodSurplusPost, getDonorProfileByOwner } from "../../utils/donorFund"; 
 import { Notification } from "../../components/utils/Notifications";
 import Wallet from "../../components/Wallet";
 import DonorDashboard from "./DonorDashboard";
