@@ -645,6 +645,71 @@ export default Canister({
       return Ok(donation); // Successfully return the reserved donation
     }
   ),
+
+  // Function to pay for a reserved Donation
+  // Complete a reserve for a donation
+  completeReserveDonation: update(
+    [Principal, text, nat64, nat64, nat64],
+    Result(Donation, Message),
+    async (reservor, donorId, reservePrice, block, memo) => {
+      const paymentVerified = await verifyPaymentInternal(
+        reservor,
+        reservePrice,
+        block,
+        memo
+      );
+      if (!paymentVerified) {
+        return Err({
+          NotFound: `Cannot complete the donation reserve: cannot verify the payment, memo=${memo}`,
+        });
+      }
+      const pendingReserveOpt = pendingReserves.remove(memo);
+      if ("None" in pendingReserveOpt) {
+        return Err({
+          NotFound: `Cannot complete the donation reserve: there is no pending reserve with id=${donorId}`,
+        });
+      }
+      const reserve = pendingReserveOpt.Some;
+      const updatedReserve = {
+        ...reserve,
+        status: { Completed: "COMPLETED" },
+        paid_at_block: Some(block),
+      };
+
+      const donorProfileOpt = donorProfileStorage.get(donorId);
+      if ("None" in donorProfileOpt) {
+        throw Error(`Donor with id=${donorId} not found`);
+      }
+      const donor = donorProfileOpt.Some;
+      donor.donationAmount += reservePrice;
+      donorProfileStorage.insert(donor.id, donor);
+      persistedReserves.insert(ic.caller(), updatedReserve);
+      return Ok(updatedReserve);
+    }
+  ),
+
+  /*
+        another example of a canister-to-canister communication
+        here we call the `query_blocks` function on the ledger canister
+        to get a single block with the given number `start`.
+        The `length` parameter is set to 1 to limit the return amount of blocks.
+        In this function we verify all the details about the transaction to make sure that we can mark the order as completed
+    */
+  verifyPayment: query(
+    [Principal, nat64, nat64, nat64],
+    bool,
+    async (receiver, amount, block, memo) => {
+      return await verifyPaymentInternal(receiver, amount, block, memo);
+    }
+  ),
+
+  /*
+              a helper function to get address from the principal
+              the address is later used in the transfer method
+          */
+  getAddressFromPrincipal: query([Principal], text, (principal) => {
+    return hexAddressFromPrincipal(principal, 0);
+  }),
 });
 
 /*
@@ -684,4 +749,30 @@ function discardByTimeout(memo: nat64, delay: Duration) {
     const order = pendingReserves.remove(memo);
     console.log(`Reserve discarded ${order}`);
   });
+}
+
+async function verifyPaymentInternal(
+  receiver: Principal,
+  amount: nat64,
+  block: nat64,
+  memo: nat64
+): Promise<bool> {
+  const blockData = await ic.call(icpCanister.query_blocks, {
+    args: [{ start: block, length: 1n }],
+  });
+  const tx = blockData.blocks.find((block) => {
+    if ("None" in block.transaction.operation) {
+      return false;
+    }
+    const operation = block.transaction.operation.Some;
+    const senderAddress = binaryAddressFromPrincipal(ic.caller(), 0);
+    const receiverAddress = binaryAddressFromPrincipal(receiver, 0);
+    return (
+      block.transaction.memo === memo &&
+      hash(senderAddress) === hash(operation.Transfer?.from) &&
+      hash(receiverAddress) === hash(operation.Transfer?.to) &&
+      amount === operation.Transfer?.amount.e8s
+    );
+  });
+  return tx ? true : false;
 }
