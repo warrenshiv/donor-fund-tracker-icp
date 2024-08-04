@@ -31,6 +31,8 @@ import {
 } from "azle/canisters/ledger";
 import { hashCode } from "hashcode";
 import { v4 as uuidv4 } from "uuid";
+import Donor from "../../dfinity_js_frontend/src/pages/Donor/Donor";
+import { getDonorProfile } from "../../dfinity_js_frontend/src/utils/foodshare";
 
 // Donor Profile Struct
 const DonorProfile = Record({
@@ -161,6 +163,99 @@ export default Canister({
     }
   ),
 
+  // Function to update a Donor Profile
+  updateDonorProfile: update(
+    [text, DonorProfilePayload],
+    Result(DonorProfile, Message),
+    (donorId, payload) => {
+      const donorProfileOpt = donorProfileStorage.get(donorId);
+
+      if ("None" in donorProfileOpt) {
+        return Err({
+          NotFound: `Donor profile with id=${donorId} not found`,
+        });
+      }
+
+      const donorProfile = donorProfileOpt.Some;
+
+      // Check if the caller is the owner of the donor profile
+      if (donorProfile.owner !== ic.caller()) {
+        return Err({ Error: "Unauthorized" });
+      }
+
+      // Update the donor profile
+      const updatedDonorProfile = {
+        ...donorProfile,
+        ...payload,
+      };
+      donorProfileStorage.insert(donorId, updatedDonorProfile);
+
+      return Ok(updatedDonorProfile);
+    }
+  ),
+
+  // Function to get a Donor Profile by ID
+  getDonorProfile: query([text], Result(DonorProfile, Message), (donorId) => {
+    const donorProfileOpt = donorProfileStorage.get(donorId);
+
+    if ("None" in donorProfileOpt) {
+      return Err({
+        NotFound: `Donor profile with id=${donorId} not found`,
+      });
+    }
+
+    return Ok(donorProfileOpt.Some);
+  }),
+
+  // Function to get a Donor Profile by Owner Principal using filter
+  getDonorProfileByOwner: query([], Result(DonorProfile, Message), () => {
+    const donorProfiles = donorProfileStorage.values().filter((donor) => {
+      return donor.owner.toText === ic.caller().toText;
+    });
+
+    if (donorProfiles.length === 0) {
+      return Err({
+        NotFound: `Donor profile for owner=${ic.caller()} not found`,
+      });
+    }
+
+    return Ok(donorProfiles[0]);
+  }),
+
+  // Function to get all Donor Profiles with error handling
+  getAllDonorProfiles: query([], Result(Vec(DonorProfile), Message), () => {
+    const donorProfiles = donorProfileStorage.values();
+
+    // Check if there are any donor profiles
+    if (donorProfiles.length === 0) {
+      return Err({ NotFound: "No donor profiles found" });
+    }
+
+    return Ok(donorProfiles);
+  }),
+
+  // Funtion to delete a Donor Profile
+  deleteDonorProfile: update([text], Result(Null, Message), (donorId) => {
+    const donorProfileOpt = donorProfileStorage.get(donorId);
+
+    if ("None" in donorProfileOpt) {
+      return Err({
+        NotFound: `Donor profile with id=${donorId} not found`,
+      });
+    }
+
+    const donorProfile = donorProfileOpt.Some;
+
+    // Check if the caller is the owner of the donor profile
+    if (donorProfile.owner !== ic.caller()) {
+      return Err({ Error: "Unauthorized" });
+    }
+
+    donorProfileStorage.remove(donorId);
+
+    return Ok(null);
+  }),
+
   // Create a Charity Profile with validation
   createCharityProfile: update(
     [CharityProfilePayload],
@@ -206,12 +301,105 @@ export default Canister({
         donationsReceived: [],
         donationsCount: 0n,
         status: "Active",
-        registeredAt: new Date().toISOString(), // Use text here, but ideally should use Date or similar
+        registeredAt: new Date().toISOString(),
       };
       charityProfileStorage.insert(charityId, charity);
       return Ok(charity); // Successfully return the created charity profile
     }
   ),
+
+  // Function to update a Charity Profile
+  updateCharityProfile: update(
+    [text, CharityProfilePayload],
+    Result(Charity, Message),
+    (charityId, payload) => {
+      const charityProfileOpt = charityProfileStorage.get(charityId);
+
+      if ("None" in charityProfileOpt) {
+        return Err({
+          NotFound: `Charity profile with id=${charityId} not found`,
+        });
+      }
+
+      const charityProfile = charityProfileOpt.Some;
+
+      // Check if the caller is the owner of the charity profile
+      if (charityProfile.owner !== ic.caller()) {
+        return Err({ Error: "Unauthorized" });
+      }
+
+      // Update the charity profile
+      const updatedCharityProfile = {
+        ...charityProfile,
+        ...payload,
+      };
+      charityProfileStorage.insert(charityId, updatedCharityProfile);
+
+      return Ok(updatedCharityProfile);
+    }
+  ),
+
+  // Function to get a Charity Profile by ID
+  getCharityProfile: query([text], Result(Charity, Message), (charityId) => {
+    const charityProfileOpt = charityProfileStorage.get(charityId);
+
+    if ("None" in charityProfileOpt) {
+      return Err({
+        NotFound: `Charity profile with id=${charityId} not found`,
+      });
+    }
+
+    return Ok(charityProfileOpt.Some);
+  }),
+
+  // Function to get a Charity Profile by Owner Principal using filter
+  getCharityProfileByOwner: query([], Result(Charity, Message), () => {
+    const charityProfiles = charityProfileStorage.values().filter((charity) => {
+      return charity.owner.toText === ic.caller().toText;
+    });
+
+    if (charityProfiles.length === 0) {
+      return Err({
+        NotFound: `Charity profile for owner=${ic.caller()} not found`,
+      });
+    }
+
+    return Ok(charityProfiles[0]);
+  }),
+
+  // Function to get all Charity Profiles with error handling
+  getAllCharityProfiles: query([], Result(Vec(Charity), Message), () => {
+    const charityProfiles = charityProfileStorage.values();
+
+    // Check if there are any charity profiles
+    if (charityProfiles.length === 0) {
+      return Err({ NotFound: "No charity profiles found" });
+    }
+
+    return Ok(charityProfiles);
+  }),
+
+  // Funtion to delete a Charity Profile
+  deleteCharityProfile: update([text], Result(Null, Message), (charityId) => {
+    const charityProfileOpt = charityProfileStorage.get(charityId);
+
+    if ("None" in charityProfileOpt) {
+      return Err({
+        NotFound: `Charity profile with id=${charityId} not found`,
+      });
+    }
+
+    const charityProfile = charityProfileOpt.Some;
+
+    // Check if the caller is the owner of the charity profile
+    if (charityProfile.owner !== ic.caller()) {
+      return Err({ Error: "Unauthorized" });
+    }
+
+    charityProfileStorage.remove(charityId);
+
+    return Ok(null);
+  }),
 });
 
 // a workaround to make uuid package work with Azle
