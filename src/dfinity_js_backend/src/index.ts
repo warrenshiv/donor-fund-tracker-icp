@@ -34,6 +34,8 @@ import { v4 as uuidv4 } from "uuid";
 import Donor from "../../dfinity_js_frontend/src/pages/Donor/Donor";
 import { getDonorProfile } from "../../dfinity_js_frontend/src/utils/foodshare";
 import { title } from "process";
+import { chain } from "@dfinity/agent/lib/cjs/polling/strategy";
+import Receiver from "../../dfinity_js_frontend/src/pages/Receiver/Receiver";
 
 // Donor Profile Struct
 const DonorProfile = Record({
@@ -84,6 +86,7 @@ const CampaignStatus = Variant({
 // Campaign Struct
 const Campaign = Record({
   id: text,
+  charityId: text,
   title: text,
   description: text,
   targetAmount: nat64,
@@ -92,6 +95,28 @@ const Campaign = Record({
   status: CampaignStatus,
   creator: Principal,
   startedAt: text,
+});
+
+// Donation Status Enum
+const DonationStatus = Variant({
+  PaymentPending: text,
+  Completed: text,
+  Cancelled: text,
+});
+
+// Donation Reserve Struct
+const Donation = Record({
+  id: text,
+  donorId: text,
+  charityId: text,
+  campaignId: text,
+  donator: Principal,
+  receiver: Principal,
+  amount: nat64,
+  status: DonationStatus,
+  createdAt: text,
+  paid_at_block: Opt(nat64),
+  memo: nat64,
 });
 
 // Message Struct
@@ -125,15 +150,26 @@ const CharityProfilePayload = Record({
 
 // Campaign Payload
 const CampaignPayload = Record({
+  charityId: text,
   title: text,
   description: text,
   targetAmount: nat64,
+});
+
+// Donation Payload
+const DonationPayload = Record({
+  donorId: text,
+  charityId: text,
+  campaignId: text,
+  amount: nat64,
 });
 
 // Storage
 const donorProfileStorage = StableBTreeMap(0, text, DonorProfile);
 const charityProfileStorage = StableBTreeMap(1, text, Charity);
 const campaignStorage = StableBTreeMap(2, text, Campaign);
+const persistedReserves = StableBTreeMap(3, Principal, Donation);
+const pendingReserves = StableBTreeMap(4, nat64, Donation);
 
 const TIMEOUT_PERIOD = 9600n; // reservation period in seconds
 
@@ -442,6 +478,14 @@ export default Canister({
         return Err({ InvalidPayload: "Missing required fields" });
       }
 
+      // Check if the charity exists
+      const charityProfileOpt = charityProfileStorage.get(payload.charityId);
+      if ("None" in charityProfileOpt) {
+        return Err({
+          NotFound: `Charity with id=${payload.charityId} not found`,
+        });
+      }
+
       // Assuming validation passes, proceed to create the campaign
       const campaignId = uuidv4();
       const campaign = {
@@ -536,7 +580,80 @@ export default Canister({
 
     return Ok(null);
   }),
+
+  // Donation Functions
+  // Function to reserve a Donation with validation
+  reserveDonation: update(
+    [DonationPayload],
+    Result(Donation, Message),
+    (payload) => {
+      // Validate the payload
+      if (!payload.donorId || !payload.charityId || !payload.campaignId) {
+        return Err({
+          InvalidPayload: "Ensure all required fields are provided",
+        });
+      }
+
+      // Check if the donor exists
+      const donorProfileOpt = donorProfileStorage.get(payload.donorId);
+      if ("None" in donorProfileOpt) {
+        return Err({
+          NotFound: `Cannot reserve donation: Donor with id=${payload.donorId} not found`,
+        });
+      }
+      const donor = donorProfileOpt.Some;
+
+      // Check if the charity exists
+      const charityProfileOpt = charityProfileStorage.get(payload.charityId);
+      if ("None" in charityProfileOpt) {
+        return Err({
+          NotFound: `Cannot reserve donation: Charity with id=${payload.charityId} not found`,
+        });
+      }
+      const charity = charityProfileOpt.Some;
+
+      // Check if the campaign exists
+      const campaignOpt = campaignStorage.get(payload.campaignId);
+      if ("None" in campaignOpt) {
+        return Err({
+          NotFound: `Cannot reserve donation: Campaign with id=${payload.campaignId} not found`,
+        });
+      }
+      const campaign = campaignOpt.Some;
+
+      // Assuming validation passes, proceed to reserve the donation
+      const donationId = uuidv4();
+      const donation = {
+        id: donationId,
+        donorId: payload.donorId,
+        charityId: payload.charityId,
+        campaignId: payload.campaignId,
+        donator: donor.owner,
+        receiver: campaign.creator,
+        amount: payload.amount,
+        status: { PaymentPending: "PaymentPending" },
+        createdAt: new Date().toISOString(),
+        paid_at_block: None,
+        memo: generateCorrelationId(payload.donorId),
+      };
+
+      console.log("donation", donation);
+
+      pendingReserves.insert(donation.memo, donation);
+      discardByTimeout(donation.memo, TIMEOUT_PERIOD);
+
+      return Ok(donation); // Successfully return the reserved donation
+    }
+  ),
 });
+
+/*
+    a hash function that is used to generate correlation ids for orders.
+    also, we use that in the verifyPayment function where we check if the used has actually paid the order
+*/
+function hash(input: any): nat64 {
+  return BigInt(Math.abs(hashCode().value(input)));
+}
 
 // a workaround to make uuid package work with Azle
 globalThis.crypto = {
@@ -551,3 +668,20 @@ globalThis.crypto = {
     return array;
   },
 };
+
+// HELPER FUNCTIONS
+function generateCorrelationId(bookId: text): nat64 {
+  const correlationId = `${bookId}_${ic.caller().toText()}_${ic.time()}`;
+  return hash(correlationId);
+}
+
+/*
+    after the order is created, we give the `delay` amount of minutes to pay for the order.
+    if it's not paid during this timeframe, the order is automatically removed from the pending orders.
+*/
+function discardByTimeout(memo: nat64, delay: Duration) {
+  ic.setTimer(delay, () => {
+    const order = pendingReserves.remove(memo);
+    console.log(`Reserve discarded ${order}`);
+  });
+}
