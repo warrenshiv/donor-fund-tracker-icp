@@ -33,6 +33,7 @@ import { hashCode } from "hashcode";
 import { v4 as uuidv4 } from "uuid";
 import Donor from "../../dfinity_js_frontend/src/pages/Donor/Donor";
 import { getDonorProfile } from "../../dfinity_js_frontend/src/utils/foodshare";
+import { title } from "process";
 
 // Donor Profile Struct
 const DonorProfile = Record({
@@ -72,6 +73,27 @@ const Charity = Record({
   registeredAt: text,
 });
 
+// Campaign Status Enum
+const CampaignStatus = Variant({
+  Active: text,
+  Completed: text,
+  Cancelled: text,
+  Pending: text,
+});
+
+// Campaign Struct
+const Campaign = Record({
+  id: text,
+  title: text,
+  description: text,
+  targetAmount: nat64,
+  totalReceived: nat64,
+  donors: Vec(text),
+  status: CampaignStatus,
+  creator: Principal,
+  startedAt: text,
+});
+
 // Message Struct
 const Message = Variant({
   Success: text,
@@ -101,9 +123,17 @@ const CharityProfilePayload = Record({
   missionStatement: text,
 });
 
+// Campaign Payload
+const CampaignPayload = Record({
+  title: text,
+  description: text,
+  targetAmount: nat64,
+});
+
 // Storage
 const donorProfileStorage = StableBTreeMap(0, text, DonorProfile);
 const charityProfileStorage = StableBTreeMap(1, text, Charity);
+const campaignStorage = StableBTreeMap(2, text, Campaign);
 
 const TIMEOUT_PERIOD = 9600n; // reservation period in seconds
 
@@ -397,6 +427,112 @@ export default Canister({
     }
 
     charityProfileStorage.remove(charityId);
+
+    return Ok(null);
+  }),
+
+  // Campaign Functions
+  // Create a Campaign with validation
+  createCampaign: update(
+    [CampaignPayload],
+    Result(Campaign, Message),
+    (payload) => {
+      // Validate the payload
+      if (!payload.title || !payload.description || !payload.targetAmount) {
+        return Err({ InvalidPayload: "Missing required fields" });
+      }
+
+      // Assuming validation passes, proceed to create the campaign
+      const campaignId = uuidv4();
+      const campaign = {
+        ...payload,
+        id: campaignId,
+        totalReceived: 0n,
+        donors: [],
+        status: { Pending: "Pending" },
+        creator: ic.caller(),
+        startedAt: new Date().toISOString(),
+      };
+
+      campaignStorage.insert(campaignId, campaign);
+      return Ok(campaign); // Successfully return the created campaign
+    }
+  ),
+
+  // Function to update a Campaign
+  updateCampaign: update(
+    [text, CampaignPayload],
+    Result(Campaign, Message),
+    (campaignId, payload) => {
+      const campaignOpt = campaignStorage.get(campaignId);
+
+      if ("None" in campaignOpt) {
+        return Err({
+          NotFound: `Campaign with id=${campaignId} not found`,
+        });
+      }
+
+      const campaign = campaignOpt.Some;
+
+      // Check if the caller is the creator of the campaign
+      if (campaign.creator !== ic.caller()) {
+        return Err({ Error: "Unauthorized" });
+      }
+
+      // Update the campaign
+      const updatedCampaign = {
+        ...campaign,
+        ...payload,
+      };
+      campaignStorage.insert(campaignId, updatedCampaign);
+
+      return Ok(updatedCampaign);
+    }
+  ),
+
+  // Function to get a Campaign by ID
+  getCampaign: query([text], Result(Campaign, Message), (campaignId) => {
+    const campaignOpt = campaignStorage.get(campaignId);
+
+    if ("None" in campaignOpt) {
+      return Err({
+        NotFound: `Campaign with id=${campaignId} not found`,
+      });
+    }
+
+    return Ok(campaignOpt.Some);
+  }),
+
+  // Function to get all Campaigns with error handling
+  getAllCampaigns: query([], Result(Vec(Campaign), Message), () => {
+    const campaigns = campaignStorage.values();
+
+    // Check if there are any campaigns
+    if (campaigns.length === 0) {
+      return Err({ NotFound: "No campaigns found" });
+    }
+
+    return Ok(campaigns);
+  }),
+
+  // Function to delete a Campaign
+  deleteCampaign: update([text], Result(Null, Message), (campaignId) => {
+    const campaignOpt = campaignStorage.get(campaignId);
+
+    if ("None" in campaignOpt) {
+      return Err({
+        NotFound: `Campaign with id=${campaignId} not found`,
+      });
+    }
+
+    const campaign = campaignOpt.Some;
+
+    // Check if the caller is the creator of the campaign
+    if (campaign.creator !== ic.caller()) {
+      return Err({ Error: "Unauthorized" });
+    }
+
+    campaignStorage.remove(campaignId);
 
     return Ok(null);
   }),
