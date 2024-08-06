@@ -58,8 +58,14 @@ export async function getDonorCampaigns(donorId) {
 }
 
 // acceptCampaign
-export async function acceptCampaign() {
-  return window.canister.farmWorkChain.acceptCampaign();
+export async function acceptCampaign(donorId, campaignId) {
+  try {
+    // Pass donorId and campaignId to the canister function
+    return await window.canister.farmWorkChain.acceptCampaign(donorId, campaignId);
+  } catch (error) {
+    console.error("Error accepting campaign:", error);
+    return { Err: { Error: error.message } };
+  }
 }
 
 

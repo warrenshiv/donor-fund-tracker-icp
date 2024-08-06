@@ -1,7 +1,7 @@
 import React from "react";
-import AcceptDonation from "./AcceptDonation";
+import AcceptDonation from "./AcceptDonation"; // Make sure this is the correct path to the AcceptDonation component
 
-const CurrrentCampaigns = ({ campaign }) => {
+const CurrrentCampaigns = ({ campaign, donorId }) => { // Accept donorId as a prop
   const {
     id,
     charityId,
@@ -44,7 +44,7 @@ const CurrrentCampaigns = ({ campaign }) => {
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>
           <td>
-            <AcceptDonation campaignId={id} />
+            <AcceptDonation campaignId={id} donorId={donorId} /> {/* Pass donorId here */}
           </td>
         </tr>
       </tbody>

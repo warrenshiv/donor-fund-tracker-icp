@@ -193,6 +193,7 @@ const DonorDashboard = ({ donor }) => {
                   <CurrrentCampaigns
                     key={index}
                     campaign={{ ..._campaign }}
+                    donorId={id} // Pass donorId here
                     getAllCampaigns={fetchCampaigns}
                   />
                 );

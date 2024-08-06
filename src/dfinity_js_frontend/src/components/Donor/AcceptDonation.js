@@ -1,71 +1,78 @@
-import React, { useCallback, useEffect, useState } from "react";
-import { Button, Modal } from "react-bootstrap";
-import { getCampaignById } from "../../utils/donorFund"; // Removed makeDonation
+import React, { useState } from "react";
+import { Button, Modal, Alert, Spinner } from "react-bootstrap";
+import { acceptCampaign } from "../../utils/donorFund"; // Ensure this is correctly imported
 
-// AcceptCampaign component
-const AcceptCampaign = ({ campaignId }) => { // Removed donorId
-  const [campaign, setCampaign] = useState({});
-  const { title, description, targetAmount, totalReceived } = campaign; // Removed charityId
+const AcceptDonation = ({ campaignId, donorId }) => {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
 
-  // Fetch campaign details using the campaign ID
-  const fetchCampaignDetails = useCallback(async () => {
+  const handleAcceptCampaign = async () => {
+    if (!donorId || !campaignId) {
+      console.error("Missing donorId or campaignId");
+      setError("Unable to accept campaign: Missing donor or campaign information.");
+      return;
+    }
+
+    console.log(`Attempting to accept campaign: donorId=${donorId}, campaignId=${campaignId}`);
+
     try {
       setLoading(true);
-      const response = await getCampaignById(campaignId);
+      setError(null);
+      setSuccess(null);
+
+      // Call the acceptCampaign function
+      const response = await acceptCampaign(donorId, campaignId);
       if (response.Ok) {
-        console.log("Campaign details fetched:", response.Ok);
-        setCampaign(response.Ok);
+        setSuccess("Campaign accepted successfully!");
+        // Optionally refresh or update the state if needed
       } else if (response.Err) {
-        console.error("Error fetching campaign:", response.Err);
-        // Optionally handle error state
+        console.error("Error accepting campaign:", response.Err);
+        setError(`Failed to accept campaign: ${response.Err.NotFound || response.Err.Error}`);
       }
-      setLoading(false);
     } catch (error) {
-      console.error("Error fetching campaign details:", error);
+      console.error("Error accepting campaign:", error);
+      setError("An error occurred while accepting the campaign.");
+    } finally {
       setLoading(false);
     }
-  }, [campaignId]);
+  };
 
   // Handle modal visibility
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
-  useEffect(() => {
-    fetchCampaignDetails();
-  }, [campaignId, fetchCampaignDetails]);
-
   return (
     <>
-      <Button
-        variant="primary"
-        size="sm" // Set the button size to small
-        onClick={handleShow}
-        disabled={loading || campaign.status?.Accepted}
-      >
-        View Campaign
+      <Button variant="primary" size="sm" onClick={handleShow}>
+        {loading ? <Spinner animation="border" size="sm" /> : "Accept"}
       </Button>
 
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
-          <Modal.Title>Campaign Details</Modal.Title>
+          <Modal.Title>Confirm Acceptance</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <p>Title: {title}</p>
-          <p>Description: {description}</p>
-          <p>Target Amount: {targetAmount?.toLocaleString()}</p>
-          <p>Total Received: {totalReceived?.toLocaleString()}</p>
+          {error && <Alert variant="danger">{error}</Alert>}
+          {success && <Alert variant="success">{success}</Alert>}
+          Are you sure you want to accept this campaign?
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose} disabled={loading}>
             Close
           </Button>
-          {/* Removed Make Donation button */}
+          <Button
+            variant="success"
+            onClick={handleAcceptCampaign}
+            disabled={loading || success}
+          >
+            {loading ? <Spinner animation="border" size="sm" /> : "Accept Campaign"}
+          </Button>
         </Modal.Footer>
       </Modal>
     </>
   );
 };
 
-export default AcceptCampaign;
+export default AcceptDonation;
