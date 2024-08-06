@@ -1,163 +1,256 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { Helmet } from "react-helmet";
+import React, { useCallback } from "react";
+import FrameComponent1 from "../../components/home/FrameComponent1";
+import DivcssS1fwqh from "../../components/home/DivcssS1fwqh";
+import Divsibling from "../../components/home/Divsibling";
+import Divactive from "../../components/home/Divactive";
+import DivcssS1fwqh1 from "../../components/home/DivcssS1fwqh1";
+import { useNavigate } from "react-router-dom";
+import FrameComponent2 from "../../components/home/FrameComponent2";
+import Footer8Dark from "../../components/home/Footer8Dark";
+import styles from "./NewHome.module.css";
 import * as Images from "../../assets/images";
 import { Img } from "../../components/Img";
-import { Button } from "../../components/Button";
-import { Heading } from "../../components/Heading";
-import { Text } from "../../components/Text";
 
-export default function HomeLanding() {
+const NewHome = () => {
+  const navigate = useNavigate();
+
+  const onSvgIconClick = useCallback(() => {
+    navigate("/frame-02");
+  }, [navigate]);
+
+  const onSvgIconClick1 = useCallback(() => {
+    navigate("/frame-03");
+  }, [navigate]);
+
   return (
-    <>
-      <Helmet>
-        <title> Food Share 🥗</title>
-        <meta
-          name="description"
-          content="Web site created using create-react-app"
+    <div className={styles.newhome}>
+      <div className={styles.newhomeChild} />
+      <img className={styles.newhomeItem} alt="" src="/group-3848.svg" />
+      <img className={styles.newhomeInner} alt="" src="/group-38491@2x.png" />
+      <FrameComponent1 maskGroup="/mask-group@2x.png" />
+      <div className={styles.transparencyParent}>
+        <b className={styles.transparency}>Transparency</b>
+        <div className={styles.trackEveryStep}>
+          Track Every Step: Monitor your donation from submission to usage with
+          complete visibility
+        </div>
+        <img
+          className={styles.layersSvgrepocomIcon}
+          alt=""
+          src="/layers-svgrepocom.svg"
         />
-      </Helmet>
-      <div className="w-full bg-white-A700 shadow-xs">
-        <header className="flex items-center justify-center rounded bg-white-A700 p-2.5">
-          <div className="mx-auto flex w-full max-w-[1341px] justify-center">
-            <div className="flex w-full items-center justify-between gap-5">
-              <Img
-                src={Images.img_image_19}
-                alt="imagenineteen"
-                className="h-[44px] w-[9%]"
-              />
-              <div className="flex items-center gap-2">
-                <Img
-                  src={Images.img_bell_2}
-                  alt="bell"
-                  className="h-[30px] w-[30px]"
-                />
-                <span className="text-[16px] leading-[19px]">
-                  +1-234-567-890
-                </span>
-              </div>
-            </div>
+      </div>
+      <div className={styles.divcssS1fwqhParent}>
+        <DivcssS1fwqh />
+        <div className={styles.divcssS1fwqh}>
+          <div className={styles.theStressAnd}>
+            The stress and loneliness courses … taught me how to comfort myself.
           </div>
-        </header>
-        <div className="flex flex-col items-center">
-          <div className="mx-auto mt-[62px] flex w-full max-w-[1185px] flex-col items-center justify-center gap-[23px] rounded-[20px] bg-gray-50_01 px-14 py-[92px] md:p-5">
-            <Heading
-              size="3xl"
-              as="h2"
-              className="mt-2 text-center !font-epilogue !text-teal-900"
-            >
-              Who are you
-            </Heading>
-            <Text size="xl" as="p" className="text-center !text-blue_gray-900">
-              Select your role to Sign up
-            </Text>
-            <div className="w-[75%] flex flex-col justify-center gap-[27px] p-5">
-              {/* <!-- Donor Card --> */}
-              <div className="flex flex-col items-center rounded-lg bg-light_blue-50 p-[1px] sm:p-5">
-                <Img
-                  src={Images.img_image_62}
-                  alt="Donor Icon"
-                  className="h-[65px] w-[65px] rounded-full"
-                />
-                <Heading
-                  size="xl"
-                  as="h3"
-                  className="mt-[18px] text-center !font-epilogue"
-                >
-                  Donor
-                </Heading>
-                <Text
-                  as="p"
-                  className="mb-[15px] mt-[9px] text-center !text-blue_gray-900"
-                >
-                  Businesses can register as donors, listing their type of business (restaurant, grocery store, etc.) and location.
-                </Text>
-                <Link
-                  to="/donor?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai"
-                  className="no-underline"
-                >
-                  <Button
-                    color="white_A700"
-                    size="lg"
-                    className="!rounded-[18px] border border-solid border-cyan-500"
-                  >
-                    <Img src={Images.img_arrow_right} alt="Right Arrow" />
-                  </Button>
-                </Link>
+          <div className={styles.aliciaCanada}>Alicia, Canada</div>
+          <div className={styles.onManagingThe}>
+            on managing the trauma of sexual assault
+          </div>
+          <img className={styles.frameIcon} alt="" src="/frame.svg" />
+        </div>
+        <Divsibling />
+        <Divactive frame="/frame-3.svg" />
+        <div className={styles.divsibling}>
+          <div className={styles.headspaceProvidesMe}>
+            Headspace provides me
+          </div>
+          <div className={styles.withA}>with … a connection to</div>
+          <div className={styles.myselfAndA}>myself, and a</div>
+          <div className={styles.disconnectionFrom}>disconnection from</div>
+          <div className={styles.negativeThoughts}>negative thoughts,</div>
+          <div className={styles.feelingsAndSensations}>
+            feelings, and sensations.
+          </div>
+          <div className={styles.keriUk}>Keri, UK</div>
+          <div className={styles.onFindingHer}>on finding her happy place</div>
+          <img className={styles.frameIcon} alt="" src="/frame.svg" />
+        </div>
+        <DivcssS1fwqh1 />
+        <div className={styles.divcssS1fwqh1}>
+          <div className={styles.aHappyWorkforce}>
+            A happy workforce leads to a happy work environment.
+          </div>
+          <div className={styles.jaimeSpain}>Jaime, Spain</div>
+          <div className={styles.onTheBenefitsContainer}>
+            <p className={styles.onTheBenefits}>
+              on the benefits of his employees embracing meditation
+            </p>
+          </div>
+          <img className={styles.frameIcon} alt="" src="/frame.svg" />
+        </div>
+        <b className={styles.testimonials}>Testimonials</b>
+        <img className={styles.svgIcon} alt="" src="/svg1.svg" />
+        <img
+          className={styles.svgIcon1}
+          alt=""
+          src="/svg-11.svg"
+          onClick={onSvgIconClick}
+        />
+      </div>
+      <div className={styles.frameParent}>
+        <div className={styles.divcssS1fwqhGroup}>
+          <img
+            className={styles.divcssS1fwqhIcon}
+            alt=""
+            src="/divcsss1fwqh@2x.png"
+          />
+          <img
+            className={styles.divcssS1fwqhIcon1}
+            alt=""
+            src="/divcsss1fwqh-1@2x.png"
+          />
+          <img
+            className={styles.divsiblingIcon}
+            alt=""
+            src="/divsibling@2x.png"
+          />
+          <img
+            className={styles.divactiveIcon}
+            alt=""
+            src="/divactive@2x.png"
+          />
+          <img
+            className={styles.divsiblingIcon1}
+            alt=""
+            src="/divsibling-1@2x.png"
+          />
+          <img
+            className={styles.divcssS1fwqhIcon2}
+            alt=""
+            src="/divcsss1fwqh-2@2x.png"
+          />
+          <img
+            className={styles.divcssS1fwqhIcon3}
+            alt=""
+            src="/divcsss1fwqh-3@2x.png"
+          />
+        </div>
+        <b className={styles.testimonials1}>Testimonials</b>
+        <img className={styles.svgIcon} alt="" src="/svg1.svg" />
+        <img className={styles.svgIcon3} alt="" src="/svg-11.svg" />
+      </div>
+      <div className={styles.frameParent}>
+        <div className={styles.divcssS1fwqhContainer}>
+          <img
+            className={styles.divcssS1fwqhIcon}
+            alt=""
+            src="/divcsss1fwqh-4@2x.png"
+          />
+          <img
+            className={styles.divcssS1fwqhIcon1}
+            alt=""
+            src="/divcsss1fwqh-5@2x.png"
+          />
+          <img
+            className={styles.divsiblingIcon2}
+            alt=""
+            src="/divsibling-2@2x.png"
+          />
+          <img
+            className={styles.divactiveIcon1}
+            alt=""
+            src="/divactive-1@2x.png"
+          />
+          <img
+            className={styles.divsiblingIcon3}
+            alt=""
+            src="/divsibling-3@2x.png"
+          />
+          <img
+            className={styles.divcssS1fwqhIcon6}
+            alt=""
+            src="/divcsss1fwqh-6@2x.png"
+          />
+          <img
+            className={styles.divcssS1fwqhIcon7}
+            alt=""
+            src="/divcsss1fwqh-7@2x.png"
+          />
+        </div>
+        <b className={styles.testimonials1}>Testimonials</b>
+        <img className={styles.svgIcon} alt="" src="/svg1.svg" />
+        <img className={styles.svgIcon3} alt="" src="/svg-11.svg" />
+      </div>
+      <section className={styles.frameSection}>
+        <div className={styles.frameContainer}>
+          <FrameComponent2 />
+          <div className={styles.frameDiv}>
+            <DivcssS1fwqh propLeft="-602.7px" />
+            <div className={styles.divcssS1fwqh2}>
+              <div className={styles.theStressAnd}>
+                The stress and loneliness courses … taught me how to comfort
+                myself.
               </div>
-
-              {/* <!-- Receiver Card --> */}
-              <div className="flex flex-col items-center rounded-lg bg-light_blue-50 p-[1px] sm:p-5">
-                <Img
-                  src={Images.img_image_62}
-                  alt="Receiver Icon"
-                  className="h-[65px] w-[65px] rounded-full"
-                />
-                <Heading
-                  size="xl"
-                  as="h3"
-                  className="mt-[18px] text-center !font-epilogue"
-                >
-                  Receiver
-                </Heading>
-                <Text
-                  as="p"
-                  className="mb-[15px] mt-[9px] text-center !text-blue_gray-900"
-                >
-                  Receivers (food banks, shelters) register detailing their needs, capacity, and receiving times.
-                </Text>
-                <Link
-                  to="/receiver?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai"
-                  className="no-underline"
-                >
-                  <Button
-                    color="white_A700"
-                    size="lg"
-                    className="!rounded-[18px] border border-solid border-cyan-500"
-                  >
-                    <Img src={Images.img_arrow_right} alt="Right Arrow" />
-                  </Button>
-                </Link>
+              <div className={styles.aliciaCanada}>Alicia, Canada</div>
+              <div className={styles.onManagingThe}>
+                on managing the trauma of sexual assault
               </div>
-
-              {/* <!-- Driver Card --> */}
-              <div className="flex flex-col items-center bg-light_blue-50 p-[1px] sm:p-5">
-                <Img
-                  src={Images.img_image_62}
-                  alt="Driver Icon"
-                  className="h-[50px] w-[50px] rounded-full"
-                  style={{ borderRadius: "22px" }}
-                />
-                <Heading
-                  size="xl"
-                  as="h3"
-                  className="mt-[12px] text-center !font-epilogue"
-                >
-                  Driver
-                </Heading>
-                <Text
-                  as="p"
-                  className="mb-[10px] mt-[6px] text-center !text-blue_gray-900"
-                >
-                  Integration with logistic service providers for pickup and delivery options, enabling seamless transfer of food from donors to receivers.
-                </Text>
-                <Link
-                  to="/driver?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai"
-                  className="no-underline"
-                >
-                  <Button
-                    color="white_A700"
-                    size="lg"
-                    className="!rounded-[12px] border border-solid border-cyan-500"
-                  >
-                    <Img src={Images.img_arrow_right} alt="Right Arrow" />
-                  </Button>
-                </Link>
-              </div>
+              <img className={styles.frameIcon} alt="" src="/frame.svg" />
             </div>
+            <Divsibling
+              propTop="246.1px"
+              propLeft="-244.5px"
+              propMinWidth="unset"
+              propMinWidth1="unset"
+            />
+            <Divactive
+              propTop="260.5px"
+              propLeft="113.7px"
+              propOpacity="0.4"
+              frame="/frame-10.svg"
+            />
+            <div className={styles.divsibling1}>
+              <div className={styles.headspaceProvidesMe}>
+                Headspace provides me
+              </div>
+              <div className={styles.withA}>with … a connection to</div>
+              <div className={styles.myselfAndA}>myself, and a</div>
+              <div className={styles.disconnectionFrom}>disconnection from</div>
+              <div className={styles.negativeThoughts}>negative thoughts,</div>
+              <div className={styles.feelingsAndSensations}>
+                feelings, and sensations.
+              </div>
+              <div className={styles.keriUk}>Keri, UK</div>
+              <div className={styles.onFindingHer}>
+                on finding her happy place
+              </div>
+              <img className={styles.frameIcon} alt="" src="/frame.svg" />
+            </div>
+            <DivcssS1fwqh1
+              propTop="260.5px"
+              propLeft="830.1px"
+              propMinWidth="86.5px"
+            />
+            <div className={styles.divcssS1fwqh3}>
+              <div className={styles.aHappyWorkforce}>
+                A happy workforce leads to a happy work environment.
+              </div>
+              <div className={styles.jaimeSpain}>Jaime, Spain</div>
+              <div className={styles.onTheBenefitsContainer}>
+                <p className={styles.onTheBenefits}>
+                  on the benefits of his employees embracing meditation
+                </p>
+              </div>
+              <img className={styles.frameIcon} alt="" src="/frame.svg" />
+            </div>
+            <h1 className={styles.testimonials3}>Testimonials</h1>
+            <img
+              className={styles.svgIcon6}
+              alt=""
+              src="/svg1.svg"
+              onClick={onSvgIconClick1}
+            />
+            <img className={styles.svgIcon3} alt="" src="/svg-11.svg" />
           </div>
         </div>
-      </div>
-    </>
+      </section>
+      <Footer8Dark group29="/group-29@2x.png" />
+    </div>
   );
-}
+};
+
+export default NewHome;
