@@ -1,5 +1,7 @@
+// components/PayDonationButton.js
+
 import React, { useState } from "react";
-import { Button, Spinner } from "react-bootstrap";
+import { Button, Spinner } from "react-bootstrap"; // Import Bootstrap components
 
 const PayDonationButton = ({ donate }) => {
   const [loading, setLoading] = useState(false);
@@ -9,11 +11,11 @@ const PayDonationButton = ({ donate }) => {
     setLoading(true);
     setError(null);
     try {
-      await donate();
-    } catch (error) {
-      setError(err.message);
+      await donate(); // Trigger the donate function passed as a prop
+    } catch (err) {
+      setError(err.message); // Capture and set error message
     } finally {
-      setLoading(false);
+      setLoading(false); // Reset loading state
     }
   };
 
@@ -27,15 +29,15 @@ const PayDonationButton = ({ donate }) => {
       >
         {loading ? (
           <Spinner animation="border" role="status">
-            <span className="sr-only">Loading...</span>
+            <span className="sr-only">Loading...</span> {/* Accessibility text */}
           </Spinner>
         ) : (
-          "Donate"
+          "Donate" // Button label when not loading
         )}
       </Button>
-      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>}
+      {error && <div style={{ color: "red", marginTop: "10px" }}>{error}</div>} {/* Display error if present */}
     </>
   );
 };
 
-export default PayDonationButton;
+export default PayDonationButton; // Export component

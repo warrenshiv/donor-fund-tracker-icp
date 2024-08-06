@@ -256,17 +256,21 @@ export default Canister({
   ),
 
   // Function to get a Donor Profile by ID
-  getDonorProfileById: query([text], Result(DonorProfile, Message), (donorId) => {
-    const donorProfileOpt = donorProfileStorage.get(donorId);
+  getDonorProfileById: query(
+    [text],
+    Result(DonorProfile, Message),
+    (donorId) => {
+      const donorProfileOpt = donorProfileStorage.get(donorId);
 
-    if ("None" in donorProfileOpt) {
-      return Err({
-        NotFound: `Donor profile with id=${donorId} not found`,
-      });
+      if ("None" in donorProfileOpt) {
+        return Err({
+          NotFound: `Donor profile with id=${donorId} not found`,
+        });
+      }
+
+      return Ok(donorProfileOpt.Some);
     }
-
-    return Ok(donorProfileOpt.Some);
-  }),
+  ),
 
   // Function to get a Donor Profile by Owner Principal using filter
   getDonorProfileByOwner: query([], Result(DonorProfile, Message), () => {
@@ -401,17 +405,21 @@ export default Canister({
   ),
 
   // Function to get a Charity Profile by ID
-  getCharityProfileById: query([text], Result(Charity, Message), (charityId) => {
-    const charityProfileOpt = charityProfileStorage.get(charityId);
+  getCharityProfileById: query(
+    [text],
+    Result(Charity, Message),
+    (charityId) => {
+      const charityProfileOpt = charityProfileStorage.get(charityId);
 
-    if ("None" in charityProfileOpt) {
-      return Err({
-        NotFound: `Charity profile with id=${charityId} not found`,
-      });
+      if ("None" in charityProfileOpt) {
+        return Err({
+          NotFound: `Charity profile with id=${charityId} not found`,
+        });
+      }
+
+      return Ok(charityProfileOpt.Some);
     }
-
-    return Ok(charityProfileOpt.Some);
-  }),
+  ),
 
   // Function to get a Charity Profile by Owner Principal using filter
   getCharityProfileByOwner: query([], Result(Charity, Message), () => {
@@ -686,32 +694,41 @@ export default Canister({
       }
       const campaign = campaignOpt.Some;
 
-      // Assuming validation passes, proceed to reserve the donation
-      const donationId = uuidv4();
-      const donation = {
-        id: donationId,
-        donorId: payload.donorId,
-        charityId: payload.charityId,
-        campaignId: payload.campaignId,
-        donator: donor.owner,
-        receiver: campaign.creator,
-        amount: payload.amount,
-        status: { PaymentPending: "PaymentPending" },
-        createdAt: new Date().toISOString(),
-        paid_at_block: None,
-        memo: generateCorrelationId(payload.donorId),
-      };
+      try {
+        // Assuming validation passes, proceed to reserve the donation
+        const donationId = uuidv4();
+        const donation = {
+          id: donationId,
+          donorId: payload.donorId,
+          charityId: payload.charityId,
+          campaignId: payload.campaignId,
+          donator: donor.owner,
+          receiver: campaign.creator,
+          amount: payload.amount,
+          status: { PaymentPending: "PaymentPending" },
+          createdAt: new Date().toISOString(),
+          paid_at_block: None,
+          memo: generateCorrelationId(payload.donorId), // Ensure memo is handled as nat64
+        };
 
-      console.log("donation", donation);
+        // Log the donation details for debugging
+        console.log("Donation reserved:", donation);
 
-      pendingReserves.insert(donation.memo, donation);
-      discardByTimeout(donation.memo, TIMEOUT_PERIOD);
+        // Insert the reserve into the pending reserves storage
+        pendingReserves.insert(donation.memo, donation);
 
-      return Ok(donation); // Successfully return the reserved donation
+        // Set a timeout to discard the reserve if not completed in time
+        discardByTimeout(donation.memo, TIMEOUT_PERIOD);
+
+        return Ok(donation); // Successfully return the reserved donation
+      } catch (error) {
+        return Err({
+          Error: `An error occurred while creating the reserve: ${error}`,
+        });
+      }
     }
   ),
 
-  // Function to pay for a reserved Donation
   // Complete a reserve for a donation
   completeReserveDonation: update(
     [Principal, text, nat64, nat64, nat64],

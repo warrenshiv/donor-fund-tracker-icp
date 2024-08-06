@@ -69,12 +69,55 @@ export async function acceptCampaign(donorId, campaignId) {
 }
 
 
-export async function makeDonation(donor, amount, campaignId) {
-  const donationCanister = window.canister.donation;
-  const donationResponse = await donationCanister.createReserveDonation(donor.id, campaignId, amount);
-  const recieverPrincipal = Principal.from(donationResponse.Ok.reciever);
-  const recieverAddress = await donationCanister.getAddressFromPrincipal(recieverPrincipal);
-  const block = await transferICP(recieverAddress, donationResponse.Ok.price, donationResponse.Ok.memo);
-  await donationCanister.completeReserveDonation(recieverPrincipal, donor.id, donationResponse.Ok.price, block, donationResponse.Ok.memo);
-  await donationCanister.changeRaised(campaignId, amount);
+// Pay Donation
+export async function payDonation(donation) {
+  const donationCanister = window.canister.donation; // Reference to the donation canister
+
+  // Step 1: Create a reservation for the donation
+  const donationReserveResp = await donationCanister.reserveDonation({
+    donorId: donation.donorId,
+    charityId: donation.charityId,
+    campaignId: donation.campaignId,
+    amount: donation.amount,
+  });
+
+  // Check if the reserve creation was successful
+  if ("Err" in donationReserveResp) {
+    console.error(donationReserveResp.Err);
+    return; // Handle error as needed
+  }
+
+  const reserve = donationReserveResp.Ok;
+  const receiverPrincipal = Principal.from(reserve.receiver);
+
+  // Step 2: Get the receiver's address
+  const receiverAddress = await donationCanister.getAddressFromPrincipal(
+    receiverPrincipal
+  );
+
+  // Step 3: Transfer ICP tokens to the receiver's address
+  const block = await transferICP(
+    receiverAddress,
+    reserve.amount,
+    reserve.memo
+  );
+
+  // Logging the transaction details
+  console.log(
+    receiverPrincipal,
+    donation.donorId,
+    reserve.amount,
+    block,
+    reserve.memo
+  );
+
+  // Step 4: Complete the donation reserve
+  await donationCanister.completeReserveDonation(
+    receiverPrincipal,
+    donation.donorId,
+    reserve.amount.toString(),
+    block,
+    reserve.memo
+  );
 }
+

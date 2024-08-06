@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Button, Modal, Form, Alert, Spinner } from "react-bootstrap";
-import { makeDonation } from "../../utils/donorFund"; // Ensure this import path is correct
+import { makeDonation } from "../../utils/donorFund";
 import { toast } from "react-toastify";
 
 const MakeDonationModal = ({ donor, campaignId, show, handleClose }) => {
@@ -18,33 +18,58 @@ const MakeDonationModal = ({ donor, campaignId, show, handleClose }) => {
       return;
     }
 
+    // Additional validation for a reasonable maximum donation amount
+    const maxDonationAmount = 1000000; // example max amount
+    if (Number(amount) > maxDonationAmount) {
+      setError(`Please enter an amount less than or equal to ${maxDonationAmount}.`);
+      return;
+    }
+
     setLoading(true);
     setError(null);
 
     try {
-      // Call the makeDonation function with donor, amount, and campaignId
-      await makeDonation(donor, parseFloat(amount), campaignId);
+      // Convert amount to the smallest unit (e.g., ICP's smallest unit)
+      const amountInSmallestUnit = parseInt(amount, 10) * 100000000;
+
+      // Make the donation
+      await makeDonation(
+        { id: donor.id }, // Pass donor ID
+        amountInSmallestUnit, // Pass converted amount
+        campaignId // Pass campaign ID
+      );
 
       // Show success notification
-      toast.success("Donation successful!");
+      toast.success("Donation made successfully!");
 
-      // Reset the form
+      // Close modal and reset state
+      handleClose();
       setAmount("");
-      handleClose(); // Close the modal on success
     } catch (error) {
-      // Detailed error handling
-      console.error("Donation error details:", error);
-      if (error.message.includes("network")) {
-        setError("Network error: Please check your connection and try again.");
-      } else if (error.message.includes("insufficient funds")) {
-        setError("Insufficient funds: Please ensure you have enough balance.");
-      } else if (error.message.includes("validation")) {
-        setError("Validation error: Please check the donation details.");
-      } else if (error.message.includes("server")) {
-        setError("Server error: Please try again later or contact support.");
+      if (error.response) {
+        // Server responded with a status other than 200 range
+        const { status, data } = error.response;
+        if (status === 400) {
+          setError("Bad request: " + data.message);
+        } else if (status === 401) {
+          setError("Unauthorized: Please log in to make a donation.");
+        } else if (status === 403) {
+          setError("Forbidden: You don't have permission to donate.");
+        } else if (status === 404) {
+          setError("Not found: The campaign or donor was not found.");
+        } else if (status === 500) {
+          setError("Internal server error: Please try again later.");
+        } else {
+          setError("Unexpected error: " + data.message);
+        }
+      } else if (error.request) {
+        // Request was made but no response received
+        setError("Network error: Unable to reach the server. Please check your internet connection.");
       } else {
-        setError("An unexpected error occurred. Please try again.");
+        // Something happened in setting up the request
+        setError("Error: " + error.message);
       }
+      toast.error("Failed to make a donation. Please check your input and balance.");
     } finally {
       setLoading(false);
     }
