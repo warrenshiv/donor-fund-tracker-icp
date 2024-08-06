@@ -23,7 +23,7 @@ const SelectorPage = () => {
           </Link>
 
           {/* Link wrapping the button for Charity Organization */}
-          <Link to="/charity" className="text-center">
+          <Link to="/charity?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai" className="text-center">
             <button className="bg-green-500 text-white py-2 px-4 rounded hover:bg-green-600 w-full">
               I am a Charity Organization
             </button>

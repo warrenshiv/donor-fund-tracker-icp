@@ -1,25 +1,25 @@
 import React, { useCallback, useEffect, useState } from "react";
-import { getDonorProfileByOwner } from "../../utils/donorFund"; 
+import { getCharityProfileByOwner } from "../../utils/donorFund";
 import { Notification } from "../../components/utils/Notifications";
 import Wallet from "../../components/Wallet";
-import DonorDashboard from "./DonorDashboard";
-import CreateDonorProfile from "../../components/Donor/CreateDonorProfile"
+import CharityDashboard from "./CharityDashboard";
+import CreateCharityProfile from "../../components/Charity/CreateCharityProfile";
 import Loader from "../../components/utils/Loader";
 import Cover from "../../components/utils/Cover";
 import { login } from "../../utils/auth";
 import { Nav } from "react-bootstrap";
 
-const Donor = () => {
-  const [donor, setDonor] = useState({});
+const Charity = () => {
+  const [charity, setCharity] = useState({});
   const [loading, setLoading] = useState(false);
 
   const isAuthenticated = window.auth.isAuthenticated;
 
-  const fetchDonor = useCallback(async () => {
+  const fetchCharity = useCallback(async () => {
     try {
       setLoading(true);
-      setDonor(
-        await getDonorProfileByOwner().then(async (res) => {
+      setCharity(
+        await getCharityProfileByOwner().then(async (res) => {
           console.log(res);
           return res.Ok;
         })
@@ -32,7 +32,7 @@ const Donor = () => {
   });
 
   useEffect(() => {
-    fetchDonor();
+    fetchCharity();
   }, []);
 
   return (
@@ -40,28 +40,26 @@ const Donor = () => {
       <Notification />
       {isAuthenticated ? (
         !loading ? (
-          donor?.name ? (
+          charity?.name ? (
             <>
               <Nav className="justify-content-end pt-3 pb-5 mr-4">
                 <Nav.Item>
                   <Wallet />
                 </Nav.Item>
               </Nav>
-              <main>
-                <DonorDashboard donor={donor} />
-              </main>
+              <main><CharityDashboard charity={charity} /></main>
             </>
           ) : (
-            <CreateDonorProfile fetchDonor={fetchDonor} />
+            <CreateCharityProfile fetchCharity={fetchCharity} />
           )
         ) : (
           <Loader />
         )
       ) : (
-        <Cover login={login}/>
+        <Cover login={login} />
       )}
     </>
   );
 };
 
-export default Donor;
+export default Charity;

@@ -9,6 +9,7 @@ import "./index.css";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import Home from "./pages/Home/Home";
 import Donor from "./pages/Donor/Donor";
+import Charity from "./pages/Charity/Charity";
 import SelectorPage from "./pages/Home/SelectorPage";
 
 const App = function AppWrapper() {
@@ -18,6 +19,7 @@ const App = function AppWrapper() {
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/donor" element={<Donor />} />
+          <Route path="/charity" element={<Charity />} />
           <Route path="/selector" element={<SelectorPage />} />
         </Routes>
       </Router>
