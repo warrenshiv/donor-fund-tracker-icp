@@ -11,6 +11,7 @@ import Home from "./pages/Home/Home";
 import Donor from "./pages/Donor/Donor"
 import Receiver from "./pages/Receiver/Receiver";
 import Driver from "./pages/Driver/Driver";
+import SelectorPage from "./pages/Home/SelectorPage";
 
 
 
@@ -25,6 +26,7 @@ const App = function AppWrapper() {
           <Route path="/donor" element={<Donor />} />
           <Route path="/receiver" element={<Receiver />} />
           <Route path="/driver" element={<Driver />} />
+          <Route path="/selector" element={<SelectorPage />} />
         </Routes>
       </Router>
  

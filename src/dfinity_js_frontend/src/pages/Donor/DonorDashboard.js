@@ -1,28 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Image, Nav, Table } from "react-bootstrap";
-import {
-  acceptFoodContract,
-  createFoodSurplusPost,
-  getAcceptedFoodContracts,
-  getAllFoodSurplusPosts,
-  getCompletedFoodContracts,
-  getAllFoodContracts,
-} from "../../utils/donorFund";
-import FoodSurplusPost from "../../components/Donor/FoodSupplyPost";
-import AcceptedContracts from "../../components/Donor/AcceptedContracts";
-import CompletedContracts from "../../components/Donor/CompletedContracts";
-import AddFoodSurplusPost from "../../components/Donor/AddFoodSurplusPost";
-import AllFoodContracts from "../../components/Donor/AllFoodContracts";
+import { getAllCampaigns } from "../../utils/donorFund";
+import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
 
+// DonorDashboard component
 const DonorDashboard = ({ donor }) => {
-  const { name, email, phoneNumber, address, businessType, donorId } = donor;
+  const {
+    name,
+    email,
+    phoneNumber,
+    address,
+    donationAmount,
+    donationsCount,
+  } = donor;
 
-  const [foodSurplusPosts, setFoodSurplusPosts] = useState([]);
-  const [acceptedContracts, setAcceptedContracts] = useState([]);
-  const [completeContracts, setCompleteContracts] = useState([]);
-  const [allContracts, setAllContracts] = useState([]);
+  const [campaigns, setCampaigns] = useState([]);
   const [hover, setHover] = useState(false);
-
   const [selectedTab, setSelectedTab] = useState("current");
 
   const handleMouseEnter = () => {
@@ -35,77 +28,26 @@ const DonorDashboard = ({ donor }) => {
 
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
-    if (tab === "current") {
-      fetchAllPosts();
-    } else if (tab === "accepted") {
-      fetchAcceptedContracts();
-    } else if (tab === "complete") {
-      fetchCompletedContracts();
-    } else if (tab === "all") {
-      fetchAllContracts();
-    }
   };
 
-  const fetchAllPosts = async () => {
+  const fetchCampaigns = async () => {
     try {
-      const posts = await getAllFoodSurplusPosts();
-      const postsWithConvertedQuantities = posts.map((post) => ({
-        ...post,
-        quantity: post.quantity.toString(), // Convert quantity here
-      }));
-      setFoodSurplusPosts(postsWithConvertedQuantities);
+      const response = await getAllCampaigns();
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setCampaigns(response.Ok); // Extract campaigns from Ok
+      } else {
+        console.error("Expected an array but received:", response);
+        setCampaigns([]); // Set an empty array if the response is not as expected
+      }
     } catch (error) {
-      console.error("Failed to fetch food surplus posts:", error);
+      console.error("Failed to fetch campaigns", error);
+      setCampaigns([]); // Handle fetch failure gracefully
     }
   };
 
-  const fetchAcceptedContracts = async () => {
-    try {
-      const contracts = await getAcceptedFoodContracts();
-      setAcceptedContracts(contracts);
-      console.log("Accepted contracts", contracts);
-    } catch (error) {
-      console.error("Failed to fetch accepted contracts:", error);
-    }
-  };
-
-  const fetchCompletedContracts = async () => {
-    try {
-      const contracts = await getCompletedFoodContracts();
-      console.log("Completed contracts", contracts);
-      setCompleteContracts(contracts);
-    } catch (error) {
-      console.error("Failed to fetch completed contracts:", error);
-    }
-  };
-
-  const fetchAllContracts = async () => {
-    try {
-      const contracts = await getAllFoodContracts();
-      console.log("All contracts", contracts);
-      setAllContracts(contracts);
-    } catch (error) {
-      console.error("Failed to fetch all contracts:", error);
-    }
-  };
-
-  const foodSurplusPost = async (data) => {
-    try {
-      const post = await createFoodSurplusPost(data);
-      setFoodSurplusPosts([...foodSurplusPosts, post]);
-    } catch (error) {
-      console.error("Failed to create food surplus post:", error);
-    }
-  };
-
-  const displayBusinessType = (businessType) => {
-    return Object.keys(businessType).join(", ");
-  };
-
+  // Fetch data on component mount
   useEffect(() => {
-    fetchAllPosts();
-    fetchAcceptedContracts();
-    fetchCompletedContracts();
+    fetchCampaigns();
   }, []);
 
   return (
@@ -133,10 +75,8 @@ const DonorDashboard = ({ donor }) => {
             <p>Email: {email}</p>
             <p>Phone: {phoneNumber}</p>
             <p>Address: {address}</p>
-            <p>Business Type: {displayBusinessType(businessType)}</p>
-          </Col>
-          <Col className="flex-1">
-            <AddFoodSurplusPost save={foodSurplusPost} donorId={donorId} />
+            <p>Donation Amount: {donationAmount}</p>
+            <p>Donations Count: {donationsCount}</p>
           </Col>
         </Row>
 
@@ -158,7 +98,7 @@ const DonorDashboard = ({ donor }) => {
                     : { color: "black", backgroundColor: "grey" }
                 }
               >
-                Current Posts
+                Current Campaigns
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mx-3">
@@ -171,7 +111,7 @@ const DonorDashboard = ({ donor }) => {
                     : { color: "black", backgroundColor: "grey" }
                 }
               >
-                All Contracts
+                All Donations
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mx-3">
@@ -184,7 +124,7 @@ const DonorDashboard = ({ donor }) => {
                     : { color: "black", backgroundColor: "grey" }
                 }
               >
-                Accepted Contracts
+                Accepted Donations
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mx-3">
@@ -197,7 +137,7 @@ const DonorDashboard = ({ donor }) => {
                     : { color: "black", backgroundColor: "grey" }
                 }
               >
-                Completed Contracts
+                Completed Donations
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -207,25 +147,28 @@ const DonorDashboard = ({ donor }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
+                  <th>CampaignId</th>
+                  <th>CharityId</th>
+                  <th>Title</th>
                   <th>Description</th>
-                  <th>Food Type</th>
-                  <th>Quantity</th>
-                  <th>Expiry Date</th>
-                  <th>Location</th>
-                  <th>Contract</th>
+                  <th>TargetAmount</th>
+                  <th>TotalReceived</th>
+                  <th>Donors</th>
+                  <th>Status</th>
+                  <th>StartedAt</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
-              {selectedTab === "current" &&
-                foodSurplusPosts.map((_offerFood, index) => {
-                  return (
-                    <FoodSurplusPost
-                      key={index}
-                      offerFood={{ ..._offerFood }}
-                      donorId={donor.donorId}
-                      getAllFoodSurplusPosts={fetchAllPosts}
-                    />
-                  );
-                })}
+
+              {campaigns.map((_campaign, index) => {
+                return (
+                  <CurrrentCampaigns
+                    key={index}
+                    campaign={{ ..._campaign }}
+                    getAllCampaigns={fetchCampaigns}
+                  />
+                );
+              })}
             </Table>
           )}
 
@@ -233,22 +176,14 @@ const DonorDashboard = ({ donor }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Contract Id</th>
-                  <th>Post Id</th>
-                  <th>Donor Id</th>
-                  <th>Receiver Id</th>
-                  <th>agreedQuantity</th>
+                  <th>Donation Id</th>
+                  <th>Charity</th>
+                  <th>Amount</th>
+                  <th>Date</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              {selectedTab === "accepted" &&
-                acceptedContracts.map((_acceptedContract, index) => (
-                  <AcceptedContracts
-                    key={index}
-                    acceptedContract={{ ..._acceptedContract }}
-                    getAcceptedContracts={fetchAcceptedContracts}
-                  />
-                ))}
+              <tbody>{/* Map through accepted donations here */}</tbody>
             </Table>
           )}
 
@@ -256,24 +191,14 @@ const DonorDashboard = ({ donor }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Contract Id</th>
-                  <th>Post Id</th>
-                  <th>Donor Id</th>
-                  <th>Receiver Id</th>
-                  <th>agreedQuantity</th>
+                  <th>Donation Id</th>
+                  <th>Charity</th>
+                  <th>Amount</th>
+                  <th>Date</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              {selectedTab === "complete" &&
-                completeContracts.map((_completeContract, index) => {
-                  return (
-                    <CompletedContracts
-                      key={index}
-                      completeContract={{ ..._completeContract }}
-                      getCompletedContracts={fetchCompletedContracts}
-                    />
-                  );
-                })}
+              <tbody>{/* Map through completed donations here */}</tbody>
             </Table>
           )}
 
@@ -281,24 +206,14 @@ const DonorDashboard = ({ donor }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Contract Id</th>
-                  <th>Post Id</th>
-                  <th>Receiver Id</th>
-                  <th>Donor Id</th>
-                  <th>agreedQuantity</th>
+                  <th>Donation Id</th>
+                  <th>Charity</th>
+                  <th>Amount</th>
+                  <th>Date</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              {selectedTab === "all" &&
-                allContracts.map((_allContract, index) => {
-                  return (
-                    <AllFoodContracts
-                      key={index}
-                      contract={{ ..._allContract }}
-                      getContracts={fetchAllContracts}
-                    />
-                  );
-                })}
+              <tbody>{/* Map through all donations here */}</tbody>
             </Table>
           )}
         </Row>

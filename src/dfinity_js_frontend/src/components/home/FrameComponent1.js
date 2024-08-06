@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+import { Link } from "react-router-dom";
 import styles from "./FrameComponent1.module.css";
 import { Img } from "../../components/Img";
 import * as Images from "../../assets/images";
@@ -59,14 +60,18 @@ const FrameComponent1 = ({ className = "", frameDivPadding, maskGroup }) => {
                 <p className={styles.fundraiseFor}>a great cause</p>
               </h1>
             </div>
-            <div
-              className={styles.vulputateEuScelerisque}
-            >{`Vulputate eu scelerisque felis imperdiet proin fermentum leo. Est lorem ipsum dolor sit. `}</div>
+            <div className={styles.vulputateEuScelerisque}>
+              {`Movement and coordination are essential elements that drive individuals and teams toward remarkable achievements.`}
+            </div>
           </div>
-          <button className={styles.rectangleGroup}>
+          {/* Use Link for navigation with no underline */}
+          <Link
+            to="/selector?canisterId=br5f7-7uaaa-aaaaa-qaaca-cai"
+            className={styles.rectangleGroup}
+          >
             <div className={styles.rectangle} />
             <b className={styles.donateNow}>DONATE NOW</b>
-          </button>
+          </Link>
         </div>
       </div>
       <div className={styles.frameWrapper1}>

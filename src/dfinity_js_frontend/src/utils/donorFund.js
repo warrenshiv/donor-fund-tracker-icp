@@ -12,8 +12,8 @@ export async function getDonorProfileById(id) {
 }
 
 // getDonorProfileByOwner
-export async function getDonorProfileByOwner(owner) {
-  return window.canister.farmWorkChain.getDonorProfileByOwner(owner);
+export async function getDonorProfileByOwner() {
+  return window.canister.farmWorkChain.getDonorProfileByOwner();
 }
 
 // CreateCharityProfile
@@ -27,8 +27,8 @@ export async function getCharityProfileById(id) {
 }
 
 // getCharityProfileByOwner
-export async function getCharityProfileByOwner(owner) {
-  return window.canister.farmWorkChain.getCharityProfileByOwner(owner);
+export async function getCharityProfileByOwner() {
+  return window.canister.farmWorkChain.getCharityProfileByOwner();
 }
 
 // createCampaign

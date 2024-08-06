@@ -1,6 +1,6 @@
 import React from "react";
 import AddFoodContract from "./AddFoodContract";
-import { createFoodContract } from "../../utils/donorFund";
+import { createFoodContract } from "../../utils/foodshare";
 
 const FoodSurplusPost = ({ offerFood, getAllFoodSurplusPosts, donorId }) => {
   const { postId, foodType, quantity, expiryDate, location, description } =

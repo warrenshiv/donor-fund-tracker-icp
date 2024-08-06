@@ -31,11 +31,6 @@ import {
 } from "azle/canisters/ledger";
 import { hashCode } from "hashcode";
 import { v4 as uuidv4 } from "uuid";
-import Donor from "../../dfinity_js_frontend/src/pages/Donor/Donor";
-import { getDonorProfile } from "../../dfinity_js_frontend/src/utils/donorFund";
-import { title } from "process";
-import { chain } from "@dfinity/agent/lib/cjs/polling/strategy";
-import Receiver from "../../dfinity_js_frontend/src/pages/Receiver/Receiver";
 
 // Donor Profile Struct
 const DonorProfile = Record({
