@@ -52,6 +52,16 @@ export async function deleteCampaignById(id) {
   return window.canister.farmWorkChain.deleteCampaignById(id);
 }
 
+// getDonorCampaigns
+export async function getDonorCampaigns(donorId) {
+  return window.canister.farmWorkChain.getDonorCampaigns(donorId);
+}
+
+// acceptCampaign
+export async function acceptCampaign() {
+  return window.canister.farmWorkChain.acceptCampaign();
+}
+
 
 export async function makeDonation(donor, amount, campaignId) {
   const donationCanister = window.canister.donation;

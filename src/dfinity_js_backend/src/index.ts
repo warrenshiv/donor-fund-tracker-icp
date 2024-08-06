@@ -576,6 +576,76 @@ export default Canister({
     return Ok(null);
   }),
 
+  // Get campaigns accepted by the donor
+  getDonorCampaigns: query(
+    [text],
+    Result(Vec(Campaign), Message),
+    (donorId) => {
+      const donorProfileOpt = donorProfileStorage.get(donorId);
+      if ("None" in donorProfileOpt) {
+        return Err({
+          NotFound: `Donor with id=${donorId} not found`,
+        });
+      }
+
+      const donor = donorProfileOpt.Some;
+      const campaigns = campaignStorage.values().filter((campaign) => {
+        return campaign.donors.includes(donorId);
+      });
+
+      // Check if there are any campaigns
+      if (campaigns.length === 0) {
+        return Err({ NotFound: "No campaigns found for this donor" });
+      }
+
+      return Ok(campaigns);
+    }
+  ),
+
+  // Function for a donor to accept a campaign
+  acceptCampaign: update(
+    [text, text],
+    Result(Campaign, Message),
+    (donorId, campaignId) => {
+      // Check if the donor exists
+      const donorProfileOpt = donorProfileStorage.get(donorId);
+      if ("None" in donorProfileOpt) {
+        return Err({
+          NotFound: `Donor with id=${donorId} not found`,
+        });
+      }
+
+      // Check if the campaign exists
+      const campaignOpt = campaignStorage.get(campaignId);
+      if ("None" in campaignOpt) {
+        return Err({
+          NotFound: `Campaign with id=${campaignId} not found`,
+        });
+      }
+
+      // Assuming validation passes, proceed to accept the campaign
+      const campaign = campaignOpt.Some;
+      const donor = donorProfileOpt.Some;
+
+      // Update the donor profile
+      const updatedDonor = {
+        ...donor,
+        donations: [...donor.donations, campaignId],
+        donationsCount: donor.donationsCount + 1n,
+      };
+      donorProfileStorage.insert(donorId, updatedDonor);
+
+      // Update the campaign
+      const updatedCampaign = {
+        ...campaign,
+        donors: [...campaign.donors, donorId],
+      };
+      campaignStorage.insert(campaignId, updatedCampaign);
+
+      return Ok(updatedCampaign); // Successfully return the updated campaign
+    }
+  ),
+
   // Donation Functions
   // Function to reserve a Donation with validation
   reserveDonation: update(

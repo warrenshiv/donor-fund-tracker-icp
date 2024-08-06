@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Image, Nav, Table } from "react-bootstrap";
-import { getAllCampaigns } from "../../utils/donorFund";
+import { getAllCampaigns, getDonorCampaigns } from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
+import AcceptedCampaigns from "../../components/Donor/AcceptedCampaigns";
 
 // DonorDashboard component
 const DonorDashboard = ({ donor }) => {
   const {
+    id, // Assuming donor ID is available here
     name,
     email,
     phoneNumber,
@@ -15,15 +17,16 @@ const DonorDashboard = ({ donor }) => {
   } = donor;
 
   const [campaigns, setCampaigns] = useState([]);
-  const [hover, setHover] = useState(false);
+  const [acceptedDonations, setAcceptedDonations] = useState([]);
+  const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
-  const handleMouseEnter = () => {
-    setHover(true);
+  const handleMouseEnter = (tab) => {
+    setHoveredTab(tab);
   };
 
   const handleMouseLeave = () => {
-    setHover(false);
+    setHoveredTab(null);
   };
 
   const handleTabClick = (tab) => {
@@ -45,10 +48,34 @@ const DonorDashboard = ({ donor }) => {
     }
   };
 
+  const fetchDonorCampaigns = async () => {
+    try {
+      const donorId = donor.id; // Use the donor ID
+      const response = await getDonorCampaigns(donorId); // Pass donorId here
+      console.log("Donor Campaigns Response:", response); // Verify response
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setAcceptedDonations(response.Ok);
+      } else {
+        console.error("Expected an array but received:", response);
+        setAcceptedDonations([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch accepted donations", error);
+      setAcceptedDonations([]);
+    }
+  };
+
   // Fetch data on component mount
   useEffect(() => {
     fetchCampaigns();
+    fetchDonorCampaigns();
   }, []);
+
+  // Dynamic styling function for nav links
+  const navLinkStyle = (tab) => ({
+    color: selectedTab === tab || hoveredTab === tab ? "#ffffff" : "black",
+    backgroundColor: selectedTab === tab || hoveredTab === tab ? "#007bff" : "grey",
+  });
 
   return (
     <div className="mx-5">
@@ -90,26 +117,31 @@ const DonorDashboard = ({ donor }) => {
               <Nav.Link
                 onClick={() => handleTabClick("current")}
                 active={selectedTab === "current"}
-                onMouseEnter={handleMouseEnter}
+                onMouseEnter={() => handleMouseEnter("current")}
                 onMouseLeave={handleMouseLeave}
-                style={
-                  selectedTab === "current"
-                    ? { color: "#ffffff", backgroundColor: "#007bff" }
-                    : { color: "black", backgroundColor: "grey" }
-                }
+                style={navLinkStyle("current")}
               >
                 Current Campaigns
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mx-3">
               <Nav.Link
+                onClick={() => handleTabClick("acceptedCampaigns")}
+                active={selectedTab === "acceptedCampaigns"}
+                onMouseEnter={() => handleMouseEnter("acceptedCampaigns")}
+                onMouseLeave={handleMouseLeave}
+                style={navLinkStyle("acceptedCampaigns")}
+              >
+                Accepted Campaigns
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item className="mx-3">
+              <Nav.Link
                 onClick={() => handleTabClick("all")}
                 active={selectedTab === "all"}
-                style={
-                  selectedTab === "all"
-                    ? { color: "#ffffff", backgroundColor: "#007bff" }
-                    : { color: "black", backgroundColor: "grey" }
-                }
+                onMouseEnter={() => handleMouseEnter("all")}
+                onMouseLeave={handleMouseLeave}
+                style={navLinkStyle("all")}
               >
                 All Donations
               </Nav.Link>
@@ -118,11 +150,9 @@ const DonorDashboard = ({ donor }) => {
               <Nav.Link
                 onClick={() => handleTabClick("accepted")}
                 active={selectedTab === "accepted"}
-                style={
-                  selectedTab === "accepted"
-                    ? { color: "#ffffff", backgroundColor: "#007bff" }
-                    : { color: "black", backgroundColor: "grey" }
-                }
+                onMouseEnter={() => handleMouseEnter("accepted")}
+                onMouseLeave={handleMouseLeave}
+                style={navLinkStyle("accepted")}
               >
                 Accepted Donations
               </Nav.Link>
@@ -131,11 +161,9 @@ const DonorDashboard = ({ donor }) => {
               <Nav.Link
                 onClick={() => handleTabClick("complete")}
                 active={selectedTab === "complete"}
-                style={
-                  selectedTab === "complete"
-                    ? { color: "#ffffff", backgroundColor: "#007bff" }
-                    : { color: "black", backgroundColor: "grey" }
-                }
+                onMouseEnter={() => handleMouseEnter("complete")}
+                onMouseLeave={handleMouseLeave}
+                style={navLinkStyle("complete")}
               >
                 Completed Donations
               </Nav.Link>
@@ -169,6 +197,31 @@ const DonorDashboard = ({ donor }) => {
                   />
                 );
               })}
+            </Table>
+          )}
+
+          {selectedTab === "acceptedCampaigns" && (
+            <Table striped bordered hover responsive>
+              <thead>
+                <tr>
+                  <th>CampaignId</th>
+                  <th>CharityId</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>TargetAmount</th>
+                  <th>TotalReceived</th>
+                  <th>Donors</th>
+                  <th>Status</th>
+                  <th>StartedAt</th>
+                </tr>
+              </thead>
+              {acceptedDonations.map((_campaign, index) => (
+                <AcceptedCampaigns
+                  key={index}
+                  acceptedCampaign={{ ..._campaign }}
+                  getDonorCampaigns={fetchDonorCampaigns}
+                />
+              ))}
             </Table>
           )}
 
