@@ -214,6 +214,7 @@ const DonorDashboard = ({ donor }) => {
                   <th>Donors</th>
                   <th>Status</th>
                   <th>StartedAt</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               {acceptedDonations.map((_campaign, index) => (

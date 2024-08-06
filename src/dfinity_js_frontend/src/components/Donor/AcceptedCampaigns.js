@@ -1,5 +1,10 @@
-import React from "react";
-const AcceptedCampaigns = ({ acceptedCampaign }) => {
+import React, { useState } from "react"; // Import useState for managing modal state
+import { Button } from "react-bootstrap"; // Import Button for triggering the modal
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import MakeDonationModal from "./MakeDonationModal"; // Ensure the path is correct
+
+const AcceptedCampaigns = ({ acceptedCampaign, donor }) => {
   const {
     id,
     charityId,
@@ -11,6 +16,8 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
     startedAt,
     status,
   } = acceptedCampaign;
+
+  const [show, setShow] = useState(false); // State to manage modal visibility
 
   // Helper function to display status
   const displayStatus = (status) => {
@@ -28,8 +35,15 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
     return date.toLocaleString(); // This will format date and time based on user's locale
   };
 
+  // Function to handle modal close
+  const handleClose = () => setShow(false);
+
+  // Function to handle modal open
+  const handleShow = () => setShow(true);
+
   return (
     <>
+      <ToastContainer />
       <tbody>
         <tr>
           <td>{id}</td>
@@ -41,6 +55,17 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
           <td>{donors.length}</td>
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>
+          <td>
+            <Button variant="success" onClick={handleShow}>
+              Donate
+            </Button>
+            <MakeDonationModal
+              donor={donor}
+              campaignId={id} 
+              show={show}
+              handleClose={handleClose}
+            />
+          </td>
         </tr>
       </tbody>
     </>

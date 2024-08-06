@@ -8,6 +8,7 @@ import Loader from "../../components/utils/Loader";
 import Cover from "../../components/utils/Cover";
 import { login } from "../../utils/auth";
 import { Nav } from "react-bootstrap";
+import MakeDonationModal from '../../components/Donor/MakeDonationModal';
 
 const Donor = () => {
   const [donor, setDonor] = useState({});
