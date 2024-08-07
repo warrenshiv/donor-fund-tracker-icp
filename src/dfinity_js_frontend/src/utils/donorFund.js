@@ -68,6 +68,11 @@ export async function acceptCampaign(donorId, campaignId) {
   }
 }
 
+// getDonorDonations
+export async function getDonorDonations(donorId) {
+  return window.canister.farmWorkChain.getDonorDonations(donorId);
+}
+
 
 // Pay Donation
 export async function payDonation(donation) {

@@ -2,7 +2,7 @@ import React from "react"; // Import React
 import { ToastContainer, toast } from "react-toastify"; // Import ToastContainer and toast for notifications
 import "react-toastify/dist/ReactToastify.css"; // Import React Toastify CSS
 import PayDonationButton from "../../components/Donor/MakeDonation"; // Import the PayDonationButton component
-import { payDonation } from "../../utils/donorFund"; // Import the payDonation function
+import { payDonation } from "../../utils/donorFund"; 
 
 const AcceptedCampaigns = ({ acceptedCampaign, donor }) => {
   // Destructure properties from acceptedCampaign

@@ -1,8 +1,13 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Image, Nav, Table } from "react-bootstrap";
-import { getAllCampaigns, getDonorCampaigns } from "../../utils/donorFund";
+import {
+  getAllCampaigns,
+  getDonorCampaigns,
+  getDonorDonations,
+} from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
 import AcceptedCampaigns from "../../components/Donor/AcceptedCampaigns";
+import MyDonations from "../../components/Donor/MyDonations";
 
 // DonorDashboard component
 const DonorDashboard = ({ donor }) => {
@@ -17,6 +22,7 @@ const DonorDashboard = ({ donor }) => {
   } = donor;
 
   const [campaigns, setCampaigns] = useState([]);
+  const [myDonations, setMyDonations] = useState([]);
   const [acceptedDonations, setAcceptedDonations] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
@@ -65,16 +71,35 @@ const DonorDashboard = ({ donor }) => {
     }
   };
 
+  const fetchDonorDonations = async () => {
+    // Fetch donor donations here
+    try {
+      const donorId = donor.id;
+      const response = await getDonorDonations(donorId);
+      console.log("Donor Donations Response:", response);
+      if (response.Ok && Array.isArray(response.Ok)) {
+        // Set accepted donations here
+      } else {
+        console.error("Expected an array but received:", response);
+        // Handle response error here
+      }
+    } catch (error) {
+      console.error("Failed to fetch donor donations", error);
+    }
+  };
+
   // Fetch data on component mount
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
+    fetchDonorDonations();
   }, []);
 
   // Dynamic styling function for nav links
   const navLinkStyle = (tab) => ({
     color: selectedTab === tab || hoveredTab === tab ? "#ffffff" : "black",
-    backgroundColor: selectedTab === tab || hoveredTab === tab ? "#007bff" : "grey",
+    backgroundColor:
+      selectedTab === tab || hoveredTab === tab ? "#007bff" : "grey",
   });
 
   return (
@@ -143,7 +168,7 @@ const DonorDashboard = ({ donor }) => {
                 onMouseLeave={handleMouseLeave}
                 style={navLinkStyle("all")}
               >
-                All Donations
+                My Donations
               </Nav.Link>
             </Nav.Item>
             <Nav.Item className="mx-3">
@@ -193,7 +218,7 @@ const DonorDashboard = ({ donor }) => {
                   <CurrrentCampaigns
                     key={index}
                     campaign={{ ..._campaign }}
-                    donorId={id} // Pass donorId here
+                    donorId={id}
                     getAllCampaigns={fetchCampaigns}
                   />
                 );
@@ -262,13 +287,25 @@ const DonorDashboard = ({ donor }) => {
               <thead>
                 <tr>
                   <th>Donation Id</th>
-                  <th>Charity</th>
+                  <th>DonorId</th>
+                  <th>CharityId</th>
+                  <th>CampaignId</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>PaidAt</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>{/* Map through all donations here */}</tbody>
+
+              {myDonations.map((_donation, index) => {
+                return (
+                  <MyDonations
+                    key={index}
+                    donations={{ ..._donation }}
+                    donorId={id}
+                    getDonorDonations={fetchDonorDonations}
+                  />
+                );
+              })}
             </Table>
           )}
         </Row>
