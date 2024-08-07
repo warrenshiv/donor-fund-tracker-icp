@@ -1,13 +1,21 @@
 import React, { useEffect, useState } from "react";
 import { Container, Row, Col, Image, Nav, Table } from "react-bootstrap";
-import { getAllCampaigns, getDonorCampaigns } from "../../utils/donorFund";
-import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
-import AcceptedCampaigns from "../../components/Donor/AcceptedCampaigns";
+import {
+  getAllCampaigns,
+  getDonorCampaigns,
+  createCampaign,
+} from "../../utils/donorFund";
+import CurrrentCampaigns from "../../components/Charity/CurrrentCampaigns";
+import AcceptedCampaigns from "../../components/Charity/AcceptedCampaigns";
+import AddCampaign from "../../components/Charity/AddCampaign";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 // CharityDashboard component
 const CharityDashboard = ({ charity }) => {
   const {
-    id, // Assuming charity ID is available here
+    id,
+    donorId, // Ensure donorId is part of the charity object
     name,
     email,
     phoneNumber,
@@ -15,6 +23,9 @@ const CharityDashboard = ({ charity }) => {
     donationAmount,
     donationsCount,
   } = charity;
+
+  // Log the charity object to see its structure
+  console.log("Charity object:", charity);
 
   const [campaigns, setCampaigns] = useState([]);
   const [acceptedDonations, setAcceptedDonations] = useState([]);
@@ -31,6 +42,23 @@ const CharityDashboard = ({ charity }) => {
 
   const handleTabClick = (tab) => {
     setSelectedTab(tab);
+  };
+
+  const CampaignPost = async (data) => {
+    try {
+      const response = await createCampaign(data);
+      if (response.Ok) {
+        console.log("Campaign created successfully");
+        fetchCampaigns();
+        toast.success("Campaign created successfully!");
+      } else {
+        console.error("Failed to create campaign", response);
+        toast.error("Failed to create campaign.");
+      }
+    } catch (error) {
+      console.error("Failed to create campaign", error);
+      toast.error("Error creating campaign.");
+    }
   };
 
   const fetchCampaigns = async () => {
@@ -50,8 +78,11 @@ const CharityDashboard = ({ charity }) => {
 
   const fetchDonorCampaigns = async () => {
     try {
-      const charityId = charity.id; // Use the charity ID
-      const response = await getDonorCampaigns(charityId); // Pass charityId here
+      console.log("Fetching campaigns for donorId:", donorId); // Debugging
+      if (!donorId) {
+        throw new Error("donorId is undefined or null");
+      }
+      const response = await getDonorCampaigns(donorId); // Pass donorId here
       console.log("Charity Campaigns Response:", response); // Verify response
       if (response.Ok && Array.isArray(response.Ok)) {
         setAcceptedDonations(response.Ok);
@@ -60,7 +91,7 @@ const CharityDashboard = ({ charity }) => {
         setAcceptedDonations([]);
       }
     } catch (error) {
-      console.error("Failed to fetch charity campaigns", error);
+      console.error("Failed to fetch donor campaigns", error);
       setAcceptedDonations([]);
     }
   };
@@ -68,7 +99,7 @@ const CharityDashboard = ({ charity }) => {
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
-  }, []);
+  }, [donorId]);
 
   // Dynamic styling function for nav links
   const navLinkStyle = (tab) => ({
@@ -104,6 +135,9 @@ const CharityDashboard = ({ charity }) => {
             <p>Address: {address}</p>
             <p>Donation Amount: {donationAmount}</p>
             <p>Donations Count: {donationsCount}</p>
+          </Col>
+          <Col className="flex-1">
+            <AddCampaign save={CampaignPost} charityId={id} />
           </Col>
         </Row>
 
@@ -184,7 +218,6 @@ const CharityDashboard = ({ charity }) => {
                   <th>Donors</th>
                   <th>Status</th>
                   <th>StartedAt</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
 
@@ -214,7 +247,6 @@ const CharityDashboard = ({ charity }) => {
                   <th>Donors</th>
                   <th>Status</th>
                   <th>StartedAt</th>
-                  <th>Actions</th>
                 </tr>
               </thead>
               {acceptedDonations.map((_campaign, index) => (
