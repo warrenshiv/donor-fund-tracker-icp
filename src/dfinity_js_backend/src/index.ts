@@ -124,6 +124,7 @@ const DonationReportStatus = Variant({
 
 // Donation Report Struct
 const DonationReport = Record({
+  id: text,
   donorId: text,
   charityId: text,
   campaignId: text,
@@ -966,14 +967,16 @@ export default Canister({
       }
 
       // Assuming validation passes, proceed to create the donation report
+      const donationReportId = uuidv4();
       const donationReport = {
         ...payload,
+        id: donationReportId,
         status: { Completed: "Completed" },
         createdAt: new Date().toISOString(),
         paidAt: None,
       };
 
-      donationReportStorage.insert(payload.donorId, donationReport);
+      donationReportStorage.insert(donationReportId, donationReport);
       return Ok(donationReport); // Successfully return the created donation report
     }
   ),

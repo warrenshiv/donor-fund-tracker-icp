@@ -1,4 +1,7 @@
 import React from "react";
+import CreateReport from "./CreateReport";
+import { createDonationReport } from "../../utils/donorFund";
+import { toast } from "react-toastify";
 
 const CompletedCampaigns = ({ campaign }) => {
   const {
@@ -29,6 +32,37 @@ const CompletedCampaigns = ({ campaign }) => {
     return date.toLocaleString(); // This will format date and time based on user's locale
   };
 
+  // Save the report
+  const saveReport = async (report) => {
+    try {
+      const response = await createDonationReport(report);
+
+      if ("Ok" in response) {
+        const {
+          status,
+          donorId,
+          createdAt,
+          campaignId,
+          campaignTitle,
+          amount,
+          paidAt,
+          charityId,
+        } = response.Ok;
+        console.log("Report created successfully", response.Ok);
+        toast.success(
+          `Report created successfully for campaign ${campaignTitle}`
+        );
+      } else {
+        const errorType = Object.keys(response.Err)[0];
+        console.error(`Failed to create report: ${errorType}`, response.Err);
+        toast.error(`Failed to create report: ${errorType}`);
+      }
+    } catch (error) {
+      console.error("Failed to create report", error);
+      toast.error("Failed to create report due to an unexpected error");
+    }
+  };
+
   return (
     <>
       <tbody>
@@ -42,6 +76,9 @@ const CompletedCampaigns = ({ campaign }) => {
           <td>{donors.length}</td>
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>
+          <td>
+            <CreateReport save={saveReport} />
+          </td>
         </tr>
       </tbody>
     </>

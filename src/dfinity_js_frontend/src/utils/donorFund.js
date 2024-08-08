@@ -106,6 +106,11 @@ export async function getAllDonationReports() {
   return window.canister.farmWorkChain.getAllDonationReports();
 }
 
+// createDonationReport
+export async function createDonationReport(report) {
+  return window.canister.farmWorkChain.createDonationReport(report);
+}
+
 // Pay Donation
 export async function payDonation(donation) {
   const donationCanister = window.canister.farmWorkChain;
