@@ -6,11 +6,13 @@ import {
   createCampaign,
   getCompletedCampaigns,
   getAcceptedCampaigns,
+  getCharityDonations,
 } from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Charity/CurrrentCampaigns";
 import CompletedCampaigns from "../../components/Charity/CompletedCampaigns";
 import AcceptedCampaigns from "../../components/Charity/AcceptedCampaigns";
 import AddCampaign from "../../components/Charity/AddCampaign";
+import Donations from "../../components/Charity/Donations";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -27,13 +29,11 @@ const CharityDashboard = ({ charity }) => {
     donationsCount,
   } = charity;
 
-  // Log the charity object to see its structure
-  console.log("Charity object:", charity);
-
   const [campaigns, setCampaigns] = useState([]);
   const [acceptedDonations, setAcceptedDonations] = useState([]);
   const [completedCampaigns, setCompletedCampaigns] = useState([]);
   const [acceptedCampaigns, setAcceptedCampaigns] = useState([]);
+  const [allDonations, setAllDonations] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
@@ -136,11 +136,32 @@ const CharityDashboard = ({ charity }) => {
     }
   };
 
+  const fetchAllDonations = async () => {
+    try {
+      const charityId = id; // Pass charityId here
+      const response = await getCharityDonations(charityId);
+      console.log("All Donations Response:", response); // Debugging
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setAllDonations(response.Ok);
+      } else if (response.Err && response.Err.NotFound) {
+        console.warn(response.Err.NotFound); // Log the 'not found' message
+        setAllDonations([]); // Set an empty array when no donations are found
+      } else {
+        console.error("Unexpected response format:", response);
+        setAllDonations([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch all donations", error);
+      setAllDonations([]);
+    }
+  };
+
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
     fetchCompletedCampaigns();
     fetchAcceptedCampaigns();
+    fetchAllDonations();
   }, [donorId]);
 
   // Dynamic styling function for nav links
@@ -350,13 +371,18 @@ const CharityDashboard = ({ charity }) => {
               <thead>
                 <tr>
                   <th>Donation Id</th>
-                  <th>Charity</th>
+                  <th>DonorId</th>
+                  <th>CharityId</th>
+                  <th>CampaignId</th>
+                  <th>Receiver</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>PaidAt</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>{/* Map through all donations here */}</tbody>
+              {allDonations.map((_donation, index) => {
+                return <Donations key={index} donations={{ ..._donation }} />;
+              })}
             </Table>
           )}
         </Row>
