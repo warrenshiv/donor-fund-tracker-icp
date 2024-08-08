@@ -80,14 +80,16 @@ export async function payDonation(donation) {
   const donationCanister = window.canister.farmWorkChain;
 
   // Hardcoded donorId
-  const hardcodedDonorId = "f4f2f0e3-ecf2-48b5-a460-d15fc5243223";
+  // const hardcodedDonorId = "f4f2f0e3-ecf2-48b5-a460-d15fc5243223";
+
+ 
 
   // Step 1: Create a reservation for the donation
   const donationReserveResp = await donationCanister.reserveDonation({
-    donorId: hardcodedDonorId,
+    donorId: donation.donorId,
     charityId: donation.charityId,
     campaignId: donation.campaignId,
-    amount: donation.amount,
+    amount: donation.amountS,
   });
 
   // Check if the reserve creation was successful
@@ -97,6 +99,7 @@ export async function payDonation(donation) {
   }
 
   const reserve = donationReserveResp.Ok;
+  console.log("reserve",reserve)
   const receiverPrincipal = Principal.from(reserve.receiver);
 
   // Step 2: Get the receiver's address
@@ -114,7 +117,7 @@ export async function payDonation(donation) {
   // Logging the transaction details
   console.log(
     receiverPrincipal,
-    hardcodedDonorId, // Log hardcoded donorId
+    donation.donorId, // Log hardcoded donorId
     reserve.amount,
     block,
     reserve.memo
@@ -123,8 +126,8 @@ export async function payDonation(donation) {
   // Step 4: Complete the donation reserve
   await donationCanister.completeReserveDonation(
     receiverPrincipal,
-    hardcodedDonorId, // Use hardcoded donorId
-    reserve.amount.toString(),
+    donation.donorId, // Use hardcoded donorId
+    reserve.amount,
     block,
     reserve.memo
   );

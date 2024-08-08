@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PayDonationButton from "../../components/Donor/PayDonation";
 import { payDonation } from "../../utils/donorFund";
 
-const AcceptedCampaigns = ({ acceptedCampaign }) => {
+const AcceptedCampaigns = ({ donorId,acceptedCampaign }) => {
   // Destructure properties from acceptedCampaign
   const {
     id,
@@ -43,17 +43,23 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
 
   // Log the amount for debugging
   console.log("Amount to be donated (as integer):", amount);
+  console.log("This is Donor Id :", donorId);
 
   // Handle donation payment
   const campaignId = id;
   const handleDonate = async () => {
+
+    const amntStr = amount;
+    const amountSB = parseInt(amntStr, 10) * 10**8;
+    const amountS = BigInt(amountSB);
+    console.log("Print AmountStr :", amountS);
     try {
       console.log(
         "Donating to campaign and charity with ids respectively: ",
         campaignId,
         charityId
       );
-      await payDonation({ campaignId, charityId, amount}).then(async (res) => {
+      await payDonation({donorId, campaignId, charityId, amountS}).then(async (res) => {
         console.log("Donation successful: ", res);
         toast.success("Donation successful!");
       });
