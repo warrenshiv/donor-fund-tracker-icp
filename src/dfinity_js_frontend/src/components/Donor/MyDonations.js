@@ -4,6 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 
 const MyDonations = ({ donations }) => {
   const {
+    id,
     donorId,
     charityId,
     campaignId,
@@ -32,13 +33,17 @@ const MyDonations = ({ donations }) => {
     return date.toLocaleString(); // Formats date and time based on user's locale
   };
 
+  // Convert amount from BigInt to number
+  const amount1 = amount / BigInt(10**8);
+
   return (
     <tbody>
       <tr>
+        <td>{id}</td>
         <td>{donorId}</td>
-        <td>{campaignId}</td>
         <td>{charityId}</td>
-        <td>{formatNumber(amount)}</td>
+        <td>{campaignId}</td>
+        <td>{amount1.toString()} ICP</td>
         <td>{formatDateTime(createdAt)}</td>
         <td>{displayStatus(status)}</td>
       </tr>

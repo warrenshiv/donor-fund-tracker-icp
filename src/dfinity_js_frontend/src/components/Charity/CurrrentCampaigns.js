@@ -37,7 +37,7 @@ const CurrrentCampaigns = ({ campaign, donorId }) => { // Accept donorId as a pr
           <td>{charityId}</td>
           <td>{title}</td>
           <td>{description}</td>
-          <td>{formatNumber(targetAmount)}</td>
+          <td>{targetAmount.toString()} ICP</td>
           <td>{formatNumber(totalReceived)}</td>
           <td>{donors.length}</td>
           <td>{displayStatus(status)}</td>

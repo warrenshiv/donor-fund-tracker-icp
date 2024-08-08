@@ -72,19 +72,19 @@ const DonorDashboard = ({ donor }) => {
   };
 
   const fetchDonorDonations = async () => {
-    // Fetch donor donations here
     try {
       const donorId = donor.id;
       const response = await getDonorDonations(donorId);
       console.log("Donor Donations Response:", response);
       if (response.Ok && Array.isArray(response.Ok)) {
-        // Set accepted donations here
+        setMyDonations(response.Ok); // Set myDonations state here
       } else {
         console.error("Expected an array but received:", response);
-        // Handle response error here
+        setMyDonations([]); // Handle response error here
       }
     } catch (error) {
       console.error("Failed to fetch donor donations", error);
+      setMyDonations([]); // Handle fetch failure gracefully
     }
   };
 
@@ -173,24 +173,24 @@ const DonorDashboard = ({ donor }) => {
             </Nav.Item>
             <Nav.Item className="mx-3">
               <Nav.Link
-                onClick={() => handleTabClick("accepted")}
-                active={selectedTab === "accepted"}
-                onMouseEnter={() => handleMouseEnter("accepted")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("accepted")}
-              >
-                Accepted Donations
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item className="mx-3">
-              <Nav.Link
                 onClick={() => handleTabClick("complete")}
                 active={selectedTab === "complete"}
                 onMouseEnter={() => handleMouseEnter("complete")}
                 onMouseLeave={handleMouseLeave}
                 style={navLinkStyle("complete")}
               >
-                Completed Donations
+                Completed Campaigns
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item className="mx-3">
+              <Nav.Link
+                onClick={() => handleTabClick("accepted")}
+                active={selectedTab === "accepted"}
+                onMouseEnter={() => handleMouseEnter("accepted")}
+                onMouseLeave={handleMouseLeave}
+                style={navLinkStyle("accepted")}
+              >
+               View Donations Report
               </Nav.Link>
             </Nav.Item>
           </Nav>

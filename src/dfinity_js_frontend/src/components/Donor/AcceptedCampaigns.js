@@ -78,8 +78,8 @@ const AcceptedCampaigns = ({ donorId,acceptedCampaign }) => {
           <td>{charityId}</td>
           <td>{title}</td>
           <td>{description}</td>
-          <td>{formatNumber(targetAmount)}</td>
-          <td>{formatNumber(totalReceived)}</td>
+          <td>{formatNumber(targetAmount)} ICP</td>
+          <td>{formatNumber(totalReceived)} ICP</td>
           <td>{donors.length}</td>
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>
