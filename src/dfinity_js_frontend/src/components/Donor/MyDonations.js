@@ -8,6 +8,7 @@ const MyDonations = ({ donations }) => {
     donorId,
     charityId,
     campaignId,
+    receiver,
     amount,
     status,
     createdAt,
@@ -34,7 +35,12 @@ const MyDonations = ({ donations }) => {
   };
 
   // Convert amount from BigInt to number
-  const amount1 = amount / BigInt(10**8);
+  const amount1 = Number(amount) / 10**8;
+
+  // Convert principal objects to string
+  const formatPrincipal = (principal) => {
+    return principal && typeof principal === "object" && principal._isPrincipal ? principal._arr.join("") : "N/A";
+  };
 
   return (
     <tbody>
@@ -43,7 +49,8 @@ const MyDonations = ({ donations }) => {
         <td>{donorId}</td>
         <td>{charityId}</td>
         <td>{campaignId}</td>
-        <td>{amount1.toString()} ICP</td>
+        <td>{formatPrincipal(receiver)}</td>
+        <td>{formatNumber(amount1)} ICP</td>
         <td>{formatDateTime(createdAt)}</td>
         <td>{displayStatus(status)}</td>
       </tr>

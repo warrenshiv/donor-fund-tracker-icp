@@ -322,6 +322,7 @@ const DonorDashboard = ({ donor }) => {
                   <th>DonorId</th>
                   <th>CharityId</th>
                   <th>CampaignId</th>
+                  <th>Receiver</th>
                   <th>Amount</th>
                   <th>PaidAt</th>
                   <th>Status</th>

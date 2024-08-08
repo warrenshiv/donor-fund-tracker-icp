@@ -96,6 +96,11 @@ export async function getCompletedCampaigns() {
   return window.canister.farmWorkChain.getCompletedCampaigns();
 }
 
+// getCharityDonations
+export async function getCharityDonations(charityId) {
+  return window.canister.farmWorkChain.getCharityDonations(charityId);
+}
+
 // Pay Donation
 export async function payDonation(donation) {
   const donationCanister = window.canister.farmWorkChain;
