@@ -41,7 +41,6 @@ export async function getCampaignById(id) {
   return window.canister.farmWorkChain.getCampaignById(id);
 }
 
-
 // getAllCampaigns
 export async function getAllCampaigns() {
   return window.canister.farmWorkChain.getAllCampaigns();
@@ -61,7 +60,10 @@ export async function getDonorCampaigns(donorId) {
 export async function acceptCampaign(donorId, campaignId) {
   try {
     // Pass donorId and campaignId to the canister function
-    return await window.canister.farmWorkChain.acceptCampaign(donorId, campaignId);
+    return await window.canister.farmWorkChain.acceptCampaign(
+      donorId,
+      campaignId
+    );
   } catch (error) {
     console.error("Error accepting campaign:", error);
     return { Err: { Error: error.message } };
@@ -73,14 +75,16 @@ export async function getDonorDonations(donorId) {
   return window.canister.farmWorkChain.getDonorDonations(donorId);
 }
 
-
 // Pay Donation
 export async function payDonation(donation) {
-  const donationCanister = window.canister.donation; // Reference to the donation canister
+  const donationCanister = window.canister.farmWorkChain;
+
+  // Hardcoded donorId
+  const hardcodedDonorId = "f4f2f0e3-ecf2-48b5-a460-d15fc5243223";
 
   // Step 1: Create a reservation for the donation
   const donationReserveResp = await donationCanister.reserveDonation({
-    donorId: donation.donorId,
+    donorId: hardcodedDonorId,
     charityId: donation.charityId,
     campaignId: donation.campaignId,
     amount: donation.amount,
@@ -110,7 +114,7 @@ export async function payDonation(donation) {
   // Logging the transaction details
   console.log(
     receiverPrincipal,
-    donation.donorId,
+    hardcodedDonorId, // Log hardcoded donorId
     reserve.amount,
     block,
     reserve.memo
@@ -119,10 +123,9 @@ export async function payDonation(donation) {
   // Step 4: Complete the donation reserve
   await donationCanister.completeReserveDonation(
     receiverPrincipal,
-    donation.donorId,
+    hardcodedDonorId, // Use hardcoded donorId
     reserve.amount.toString(),
     block,
     reserve.memo
   );
 }
-

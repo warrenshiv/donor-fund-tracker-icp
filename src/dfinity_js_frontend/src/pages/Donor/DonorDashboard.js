@@ -246,6 +246,7 @@ const DonorDashboard = ({ donor }) => {
                 <AcceptedCampaigns
                   key={index}
                   acceptedCampaign={{ ..._campaign }}
+                  donorId={id}
                   getDonorCampaigns={fetchDonorCampaigns}
                 />
               ))}
