@@ -289,6 +289,7 @@ const CharityDashboard = ({ charity }) => {
                   <th>Donors</th>
                   <th>Status</th>
                   <th>StartedAt</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               <tbody>

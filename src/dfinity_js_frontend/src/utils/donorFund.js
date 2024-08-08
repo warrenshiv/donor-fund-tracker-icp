@@ -83,7 +83,7 @@ export async function getAcceptedCampaigns() {
 // completeCampaign
 export async function completeCampaign(campaignId) {
   try {
-    // Pass donorId the canister function
+    // Pass campaignId to the canister function
     return await window.canister.farmWorkChain.completeCampaign(campaignId);
   } catch (error) {
     console.error("Error completing campaign:", error);

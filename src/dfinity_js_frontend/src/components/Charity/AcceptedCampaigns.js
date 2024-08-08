@@ -1,6 +1,7 @@
 import React from "react";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import MarkCampaignComplete from "./MarkCampaignComplete";
 
 const AcceptedCampaigns = ({ acceptedCampaign }) => {
   // Destructure properties from acceptedCampaign
@@ -49,6 +50,9 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
         <td>{donors.length}</td>
         <td>{displayStatus(status)}</td>
         <td>{formatDateTime(startedAt)}</td>
+        <td>
+          <MarkCampaignComplete campaignId={id} />
+        </td>
       </tr>
     </>
   );
