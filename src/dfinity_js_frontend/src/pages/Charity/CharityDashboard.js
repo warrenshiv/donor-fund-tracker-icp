@@ -4,8 +4,11 @@ import {
   getAllCampaigns,
   getDonorCampaigns,
   createCampaign,
+  getCompletedCampaigns,
+  getAcceptedCampaigns,
 } from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Charity/CurrrentCampaigns";
+import CompletedCampaigns from "../../components/Charity/CompletedCampaigns";
 import AcceptedCampaigns from "../../components/Charity/AcceptedCampaigns";
 import AddCampaign from "../../components/Charity/AddCampaign";
 import { ToastContainer, toast } from "react-toastify";
@@ -15,7 +18,7 @@ import "react-toastify/dist/ReactToastify.css";
 const CharityDashboard = ({ charity }) => {
   const {
     id,
-    donorId, // Ensure donorId is part of the charity object
+    donorId,
     name,
     email,
     phoneNumber,
@@ -29,6 +32,8 @@ const CharityDashboard = ({ charity }) => {
 
   const [campaigns, setCampaigns] = useState([]);
   const [acceptedDonations, setAcceptedDonations] = useState([]);
+  const [completedCampaigns, setCompletedCampaigns] = useState([]);
+  const [acceptedCampaigns, setAcceptedCampaigns] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
@@ -96,9 +101,46 @@ const CharityDashboard = ({ charity }) => {
     }
   };
 
+  const fetchCompletedCampaigns = async () => {
+    try {
+      const response = await getCompletedCampaigns();
+      console.log("Fetch Completed Campaigns Response:", response); // Debugging
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setCompletedCampaigns(response.Ok);
+      } else {
+        console.error("Expected an array but received:", response);
+        setCompletedCampaigns([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch completed campaigns", error);
+      setCompletedCampaigns([]);
+    }
+  };
+
+  const fetchAcceptedCampaigns = async () => {
+    try {
+      const response = await getAcceptedCampaigns();
+      console.log("Accepted Campaigns Response:", response); // Debugging
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setAcceptedCampaigns(response.Ok);
+      } else if (response.Err && response.Err.NotFound) {
+        console.warn(response.Err.NotFound); // Log the 'not found' message
+        setAcceptedCampaigns([]); // Set an empty array when no campaigns are found
+      } else {
+        console.error("Unexpected response format:", response);
+        setAcceptedCampaigns([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch accepted campaigns", error);
+      setAcceptedCampaigns([]);
+    }
+  };
+
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
+    fetchCompletedCampaigns();
+    fetchAcceptedCampaigns();
   }, [donorId]);
 
   // Dynamic styling function for nav links
@@ -199,7 +241,7 @@ const CharityDashboard = ({ charity }) => {
                 onMouseLeave={handleMouseLeave}
                 style={navLinkStyle("complete")}
               >
-                Completed Donations
+                Completed Campaigns
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -249,13 +291,14 @@ const CharityDashboard = ({ charity }) => {
                   <th>StartedAt</th>
                 </tr>
               </thead>
-              {acceptedDonations.map((_campaign, index) => (
-                <AcceptedCampaigns
-                  key={index}
-                  acceptedCampaign={{ ..._campaign }}
-                  getDonorCampaigns={fetchDonorCampaigns}
-                />
-              ))}
+              <tbody>
+                {acceptedCampaigns.map((_campaign, index) => (
+                  <AcceptedCampaigns
+                    key={index}
+                    acceptedCampaign={{ ..._campaign }}
+                  />
+                ))}
+              </tbody>
             </Table>
           )}
 
@@ -278,14 +321,26 @@ const CharityDashboard = ({ charity }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Donation Id</th>
-                  <th>Charity</th>
-                  <th>Amount</th>
-                  <th>Date</th>
+                  <th>CampaignId</th>
+                  <th>CharityId</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>TargetAmount</th>
+                  <th>TotalReceived</th>
+                  <th>Donors</th>
                   <th>Status</th>
+                  <th>StartedAt</th>
                 </tr>
               </thead>
-              <tbody>{/* Map through completed donations here */}</tbody>
+              {completedCampaigns.map((_campaign, index) => {
+                return (
+                  <CompletedCampaigns
+                    key={index}
+                    campaign={{ ..._campaign }}
+                    getCompletedCampaigns={fetchCompletedCampaigns}
+                  />
+                );
+              })}
             </Table>
           )}
 

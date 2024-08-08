@@ -75,14 +75,33 @@ export async function getDonorDonations(donorId) {
   return window.canister.farmWorkChain.getDonorDonations(donorId);
 }
 
+// getAcceptedCampaigns
+export async function getAcceptedCampaigns() {
+  return window.canister.farmWorkChain.getAcceptedCampaigns();
+}
+
+// completeCampaign
+export async function completeCampaign(campaignId) {
+  try {
+    // Pass donorId the canister function
+    return await window.canister.farmWorkChain.completeCampaign(campaignId);
+  } catch (error) {
+    console.error("Error completing campaign:", error);
+    return { Err: { Error: error.message } };
+  }
+}
+
+// getCompletedCampaigns
+export async function getCompletedCampaigns() {
+  return window.canister.farmWorkChain.getCompletedCampaigns();
+}
+
 // Pay Donation
 export async function payDonation(donation) {
   const donationCanister = window.canister.farmWorkChain;
 
   // Hardcoded donorId
   // const hardcodedDonorId = "f4f2f0e3-ecf2-48b5-a460-d15fc5243223";
-
- 
 
   // Step 1: Create a reservation for the donation
   const donationReserveResp = await donationCanister.reserveDonation({
@@ -99,7 +118,7 @@ export async function payDonation(donation) {
   }
 
   const reserve = donationReserveResp.Ok;
-  console.log("reserve",reserve)
+  console.log("reserve", reserve);
   const receiverPrincipal = Principal.from(reserve.receiver);
 
   // Step 2: Get the receiver's address

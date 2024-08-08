@@ -1,8 +1,8 @@
 import React from "react";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
-const AcceptedCampaigns = ({ acceptedCampaign, donor }) => {
+const AcceptedCampaigns = ({ acceptedCampaign }) => {
   // Destructure properties from acceptedCampaign
   const {
     id,
@@ -39,19 +39,19 @@ const AcceptedCampaigns = ({ acceptedCampaign, donor }) => {
   return (
     <>
       <ToastContainer />
-      <tbody>
-        <tr>
-          <td>{id}</td>
-          <td>{charityId}</td>
-          <td>{title}</td>
-          <td>{description}</td>
-          <td>{formatNumber(targetAmount)}</td>{" "}
-          <td>{formatNumber(totalReceived)}</td> <td>{donors.length}</td>
-          <td>{displayStatus(status)}</td> <td>{formatDateTime(startedAt)}</td>{" "}
-        </tr>
-      </tbody>
+      <tr>
+        <td>{id}</td>
+        <td>{charityId}</td>
+        <td>{title}</td>
+        <td>{description}</td>
+        <td>{formatNumber(targetAmount)}</td>
+        <td>{formatNumber(totalReceived)}</td>
+        <td>{donors.length}</td>
+        <td>{displayStatus(status)}</td>
+        <td>{formatDateTime(startedAt)}</td>
+      </tr>
     </>
   );
 };
 
-export default AcceptedCampaigns; // Export the component as default
+export default AcceptedCampaigns;

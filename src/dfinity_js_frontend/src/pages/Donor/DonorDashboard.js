@@ -4,15 +4,17 @@ import {
   getAllCampaigns,
   getDonorCampaigns,
   getDonorDonations,
+  getCompletedCampaigns,
 } from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
 import AcceptedCampaigns from "../../components/Donor/AcceptedCampaigns";
 import MyDonations from "../../components/Donor/MyDonations";
+import CompletedCampaigns from "../../components/Charity/CompletedCampaigns";
 
 // DonorDashboard component
 const DonorDashboard = ({ donor }) => {
   const {
-    id, // Assuming donor ID is available here
+    id,
     name,
     email,
     phoneNumber,
@@ -24,6 +26,7 @@ const DonorDashboard = ({ donor }) => {
   const [campaigns, setCampaigns] = useState([]);
   const [myDonations, setMyDonations] = useState([]);
   const [acceptedDonations, setAcceptedDonations] = useState([]);
+  const [completedCampaigns, setCompletedCampaigns] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
@@ -88,11 +91,27 @@ const DonorDashboard = ({ donor }) => {
     }
   };
 
+  const fetchCompletedCampaigns = async () => {
+    try {
+      const response = await getCompletedCampaigns();
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setCompletedCampaigns(response.Ok);
+      } else {
+        console.error("Expected an array but received:", response);
+        setCompletedCampaigns([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch completed campaigns", error);
+      setCompletedCampaigns([]);
+    }
+  };
+
   // Fetch data on component mount
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
     fetchDonorDonations();
+    fetchCompletedCampaigns();
   }, []);
 
   // Dynamic styling function for nav links
@@ -190,7 +209,7 @@ const DonorDashboard = ({ donor }) => {
                 onMouseLeave={handleMouseLeave}
                 style={navLinkStyle("accepted")}
               >
-               View Donations Report
+                View Donations Report
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -272,14 +291,26 @@ const DonorDashboard = ({ donor }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Donation Id</th>
-                  <th>Charity</th>
-                  <th>Amount</th>
-                  <th>Date</th>
+                  <th>CampaignId</th>
+                  <th>CharityId</th>
+                  <th>Title</th>
+                  <th>Description</th>
+                  <th>TargetAmount</th>
+                  <th>TotalReceived</th>
+                  <th>Donors</th>
                   <th>Status</th>
+                  <th>StartedAt</th>
                 </tr>
               </thead>
-              <tbody>{/* Map through completed donations here */}</tbody>
+              {completedCampaigns.map((_campaign, index) => {
+                return (
+                  <CompletedCampaigns
+                    key={index}
+                    campaign={{ ..._campaign }}
+                    getCompletedCampaigns={fetchCompletedCampaigns}
+                  />
+                );
+              })}
             </Table>
           )}
 

@@ -73,6 +73,7 @@ const Charity = Record({
 // Campaign Status Enum
 const CampaignStatus = Variant({
   Active: text,
+  Accepted: text,
   Completed: text,
   Cancelled: text,
   Pending: text,
@@ -112,6 +113,18 @@ const Donation = Record({
   createdAt: text,
   paid_at_block: Opt(nat64),
   memo: nat64,
+});
+
+// Donation Report Struct
+const DonationReport = Record({
+  donorId: text,
+  charityId: text,
+  campaignId: text,
+  campaignTitle: text,
+  amount: nat64,
+  status: DonationStatus,
+  createdAt: text,
+  paidAt: Opt(text),
 });
 
 // Message Struct
@@ -157,6 +170,18 @@ const DonationPayload = Record({
   charityId: text,
   campaignId: text,
   amount: nat64,
+});
+
+// Donation Report Payload
+const DonationReportPayload = Record({
+  donorId: text,
+  charityId: text,
+  campaignId: text,
+  campaignTitle: text,
+  amount: nat64,
+  status: DonationStatus,
+  createdAt: text,
+  paidAt: Opt(text),
 });
 
 // Storage
@@ -584,6 +609,58 @@ export default Canister({
     return Ok(null);
   }),
 
+  // Function to get all accepted campaigns
+  getAcceptedCampaigns: query([], Result(Vec(Campaign), Message), () => {
+    const campaigns = campaignStorage.values().filter((campaign) => {
+      return (
+        "Accepted" in campaign.status && campaign.status.Accepted === "Accepted"
+      );
+    });
+
+    // Check if there are any campaigns
+    if (campaigns.length === 0) {
+      return Err({ NotFound: "No accepted campaigns found" });
+    }
+
+    return Ok(campaigns);
+  }),
+
+  // Function to mark a campaign as completed, performed by the charity organization
+  completeCampaign: update([text], Result(Campaign, Message), (campaignId) => {
+    const campaignOpt = campaignStorage.get(campaignId);
+
+    if ("None" in campaignOpt) {
+      return Err({
+        NotFound: `Campaign with id=${campaignId} not found`,
+      });
+    }
+
+    const campaign = campaignOpt.Some;
+
+    // Update the campaign status
+    const updatedCampaign = {
+      ...campaign,
+      status: { Completed: "Completed" },
+    };
+    campaignStorage.insert(campaignId, updatedCampaign);
+
+    return Ok(updatedCampaign);
+  }),
+
+  // Function to fetch completed campaigns
+  getCompletedCampaigns: query([], Result(Vec(Campaign), Message), () => {
+    const campaigns = campaignStorage.values().filter((campaign) => {
+      return campaign.status.Completed === "Completed";
+    });
+
+    // Check if there are any campaigns
+    if (campaigns.length === 0) {
+      return Err({ NotFound: "No completed campaigns found" });
+    }
+
+    return Ok(campaigns);
+  }),
+
   // Get campaigns accepted by the donor
   getDonorCampaigns: query(
     [text],
@@ -643,10 +720,11 @@ export default Canister({
       };
       donorProfileStorage.insert(donorId, updatedDonor);
 
-      // Update the campaign
+      // Update the campaign and the status to Accepted
       const updatedCampaign = {
         ...campaign,
         donors: [...campaign.donors, donorId],
+        status: { Accepted: "Accepted" },
       };
       campaignStorage.insert(campaignId, updatedCampaign);
 
