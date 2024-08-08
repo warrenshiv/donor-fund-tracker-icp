@@ -266,7 +266,7 @@ const DonorDashboard = ({ donor }) => {
                   key={index}
                   acceptedCampaign={{ ..._campaign }}
                   donorId={id}
-                  getDonorCampaigns={fetchDonorCampaigns}
+                  // getDonorCampaigns={fetchDonorCampaigns}
                 />
               ))}
             </Table>

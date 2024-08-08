@@ -4,7 +4,7 @@ import "react-toastify/dist/ReactToastify.css";
 import PayDonationButton from "../../components/Donor/PayDonation";
 import { payDonation } from "../../utils/donorFund";
 
-const AcceptedCampaigns = ({ donorId,acceptedCampaign }) => {
+const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
   // Destructure properties from acceptedCampaign
   const {
     id,
