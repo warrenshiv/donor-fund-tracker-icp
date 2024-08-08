@@ -7,12 +7,14 @@ import {
   getCompletedCampaigns,
   getAcceptedCampaigns,
   getCharityDonations,
+  getAllDonationReports,
 } from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Charity/CurrrentCampaigns";
 import CompletedCampaigns from "../../components/Charity/CompletedCampaigns";
 import AcceptedCampaigns from "../../components/Charity/AcceptedCampaigns";
 import AddCampaign from "../../components/Charity/AddCampaign";
 import Donations from "../../components/Charity/Donations";
+import DonationsReport from "../../components/Charity/DonationsReport";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
@@ -34,6 +36,7 @@ const CharityDashboard = ({ charity }) => {
   const [completedCampaigns, setCompletedCampaigns] = useState([]);
   const [acceptedCampaigns, setAcceptedCampaigns] = useState([]);
   const [allDonations, setAllDonations] = useState([]);
+  const [donationReports, setDonationReports] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
@@ -117,6 +120,22 @@ const CharityDashboard = ({ charity }) => {
     }
   };
 
+  const fetchDonationsReport = async () => {
+    try {
+      const response = await getAllDonationReports();
+      console.log("Donations Report Response:", response); // Debugging
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setDonationReports(response.Ok);
+      } else {
+        console.error("Expected an array but received:", response);
+        setDonationReports([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch donations report", error);
+      setDonationReports([]);
+    }
+  };
+
   const fetchAcceptedCampaigns = async () => {
     try {
       const response = await getAcceptedCampaigns();
@@ -162,6 +181,7 @@ const CharityDashboard = ({ charity }) => {
     fetchCompletedCampaigns();
     fetchAcceptedCampaigns();
     fetchAllDonations();
+    fetchDonationsReport();
   }, [donorId]);
 
   // Dynamic styling function for nav links
@@ -328,14 +348,21 @@ const CharityDashboard = ({ charity }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Donation Id</th>
-                  <th>Charity</th>
+                  <th>Id</th>
+                  <th>DonorId</th>
+                  <th>CharityId</th>
+                  <th>CampaignId</th>
+                  <th>CampaignTitle</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>createdAt</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>{/* Map through accepted donations here */}</tbody>
+              {donationReports.map((_donation, index) => {
+                return (
+                  <DonationsReport key={index} donations={{ ..._donation }} />
+                );
+              })}
             </Table>
           )}
 

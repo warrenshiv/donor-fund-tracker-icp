@@ -115,6 +115,13 @@ const Donation = Record({
   memo: nat64,
 });
 
+// Donationation Report enum
+const DonationReportStatus = Variant({
+  Pending: text,
+  Completed: text,
+  Cancelled: text,
+});
+
 // Donation Report Struct
 const DonationReport = Record({
   donorId: text,
@@ -122,7 +129,7 @@ const DonationReport = Record({
   campaignId: text,
   campaignTitle: text,
   amount: nat64,
-  status: DonationStatus,
+  status: DonationReportStatus,
   createdAt: text,
   paidAt: Opt(text),
 });
@@ -179,9 +186,6 @@ const DonationReportPayload = Record({
   campaignId: text,
   campaignTitle: text,
   amount: nat64,
-  status: DonationStatus,
-  createdAt: text,
-  paidAt: Opt(text),
 });
 
 // Storage
@@ -190,6 +194,7 @@ const charityProfileStorage = StableBTreeMap(1, text, Charity);
 const campaignStorage = StableBTreeMap(2, text, Campaign);
 const persistedReserves = StableBTreeMap(3, Principal, Donation);
 const pendingReserves = StableBTreeMap(4, nat64, Donation);
+const donationReportStorage = StableBTreeMap(5, text, DonationReport);
 
 const TIMEOUT_PERIOD = 9600n; // reservation period in seconds
 
@@ -918,6 +923,72 @@ export default Canister({
       return Ok(donations);
     }
   ),
+
+  // Donation Report Functions
+  // Function to create a Donation Report with validation
+  createDonationReport: update(
+    [DonationReportPayload],
+    Result(DonationReport, Message),
+    (payload) => {
+      // Validate the payload
+      if (
+        !payload.donorId ||
+        !payload.charityId ||
+        !payload.campaignId ||
+        !payload.campaignTitle ||
+        !payload.amount
+      ) {
+        return Err({ InvalidPayload: "Missing required fields" });
+      }
+
+      // Check if the donor exists
+      const donorProfileOpt = donorProfileStorage.get(payload.donorId);
+      if ("None" in donorProfileOpt) {
+        return Err({
+          NotFound: `Cannot create donation report: Donor with id=${payload.donorId} not found`,
+        });
+      }
+
+      // Check if the charity exists
+      const charityProfileOpt = charityProfileStorage.get(payload.charityId);
+      if ("None" in charityProfileOpt) {
+        return Err({
+          NotFound: `Cannot create donation report: Charity with id=${payload.charityId} not found`,
+        });
+      }
+
+      // Check if the campaign exists
+      const campaignOpt = campaignStorage.get(payload.campaignId);
+      if ("None" in campaignOpt) {
+        return Err({
+          NotFound: `Cannot create donation report: Campaign with id=${payload.campaignId} not found`,
+        });
+      }
+
+      // Assuming validation passes, proceed to create the donation report
+      const donationReport = {
+        ...payload,
+        status: { Completed: "Completed" },
+        createdAt: new Date().toISOString(),
+        paidAt: None,
+      };
+
+      donationReportStorage.insert(payload.donorId, donationReport);
+      return Ok(donationReport); // Successfully return the created donation report
+    }
+  ),
+ 
+  // Function to get all Donation Reports with error handling
+  getAllDonationReports: query([], Result(Vec(DonationReport), Message), () => {
+    const donationReports = donationReportStorage.values();
+
+    // Check if there are any donation reports
+    if (donationReports.length === 0) {
+      return Err({ NotFound: "No donation reports found" });
+    }
+
+    return Ok(donationReports);
+  }),
 });
 
 /*

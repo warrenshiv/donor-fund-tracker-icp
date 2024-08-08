@@ -101,6 +101,11 @@ export async function getCharityDonations(charityId) {
   return window.canister.farmWorkChain.getCharityDonations(charityId);
 }
 
+// getAllDonationReports
+export async function getAllDonationReports() {
+  return window.canister.farmWorkChain.getAllDonationReports();
+}
+
 // Pay Donation
 export async function payDonation(donation) {
   const donationCanister = window.canister.farmWorkChain;

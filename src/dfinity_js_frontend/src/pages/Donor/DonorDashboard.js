@@ -5,11 +5,13 @@ import {
   getDonorCampaigns,
   getDonorDonations,
   getCompletedCampaigns,
+  getAllDonationReports,
 } from "../../utils/donorFund";
 import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
 import AcceptedCampaigns from "../../components/Donor/AcceptedCampaigns";
 import MyDonations from "../../components/Donor/MyDonations";
 import CompletedCampaigns from "../../components/Charity/CompletedCampaigns";
+import DonationsReport from "../../components/Charity/DonationsReport";
 
 // DonorDashboard component
 const DonorDashboard = ({ donor }) => {
@@ -27,6 +29,7 @@ const DonorDashboard = ({ donor }) => {
   const [myDonations, setMyDonations] = useState([]);
   const [acceptedDonations, setAcceptedDonations] = useState([]);
   const [completedCampaigns, setCompletedCampaigns] = useState([]);
+  const [donationReports, setDonationReports] = useState([]);
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
@@ -106,12 +109,28 @@ const DonorDashboard = ({ donor }) => {
     }
   };
 
+  const fetchDonationsReport = async () => {
+    try {
+      const response = await getAllDonationReports();
+      if (response.Ok && Array.isArray(response.Ok)) {
+        setDonationReports(response.Ok);
+      } else {
+        console.error("Expected an array but received:", response);
+        setDonationReports([]);
+      }
+    } catch (error) {
+      console.error("Failed to fetch donation reports", error);
+      setDonationReports([]);
+    }
+  };
+
   // Fetch data on component mount
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
     fetchDonorDonations();
     fetchCompletedCampaigns();
+    fetchDonationsReport();
   }, []);
 
   // Dynamic styling function for nav links
@@ -276,14 +295,24 @@ const DonorDashboard = ({ donor }) => {
             <Table striped bordered hover responsive>
               <thead>
                 <tr>
-                  <th>Donation Id</th>
-                  <th>Charity</th>
+                  <th>Id</th>
+                  <th>DonorId</th>
+                  <th>CharityId</th>
+                  <th>CampaignId</th>
+                  <th>CampaignTitle</th>
                   <th>Amount</th>
-                  <th>Date</th>
+                  <th>createdAt</th>
                   <th>Status</th>
                 </tr>
               </thead>
-              <tbody>{/* Map through accepted donations here */}</tbody>
+              {donationReports.map((_donation, index) => {
+                return (
+                  <DonationsReport
+                    key={index}
+                    donations={{ ..._donation }}
+                  />
+                );
+              })}
             </Table>
           )}
 
