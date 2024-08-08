@@ -245,17 +245,6 @@ const CharityDashboard = ({ charity }) => {
             </Nav.Item>
             <Nav.Item className="mx-3">
               <Nav.Link
-                onClick={() => handleTabClick("accepted")}
-                active={selectedTab === "accepted"}
-                onMouseEnter={() => handleMouseEnter("accepted")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("accepted")}
-              >
-                Accepted Donations
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item className="mx-3">
-              <Nav.Link
                 onClick={() => handleTabClick("complete")}
                 active={selectedTab === "complete"}
                 onMouseEnter={() => handleMouseEnter("complete")}
@@ -263,6 +252,17 @@ const CharityDashboard = ({ charity }) => {
                 style={navLinkStyle("complete")}
               >
                 Completed Campaigns
+              </Nav.Link>
+            </Nav.Item>
+            <Nav.Item className="mx-3">
+              <Nav.Link
+                onClick={() => handleTabClick("accepted")}
+                active={selectedTab === "accepted"}
+                onMouseEnter={() => handleMouseEnter("accepted")}
+                onMouseLeave={handleMouseLeave}
+                style={navLinkStyle("accepted")}
+              >
+                View Donations Report
               </Nav.Link>
             </Nav.Item>
           </Nav>
@@ -352,6 +352,7 @@ const CharityDashboard = ({ charity }) => {
                   <th>Donors</th>
                   <th>Status</th>
                   <th>StartedAt</th>
+                  <th>Actions</th>
                 </tr>
               </thead>
               {completedCampaigns.map((_campaign, index) => {
