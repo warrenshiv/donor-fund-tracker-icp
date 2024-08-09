@@ -10,7 +10,7 @@ import {
 import CurrrentCampaigns from "../../components/Donor/CurrrentCampaigns";
 import AcceptedCampaigns from "../../components/Donor/AcceptedCampaigns";
 import MyDonations from "../../components/Donor/MyDonations";
-import CompletedCampaigns from "../../components/Charity/CompletedCampaigns";
+import CompletedCampaigns from "../../components/Donor/CompletedCampaigns";
 import DonationsReport from "../../components/Charity/DonationsReport";
 
 // DonorDashboard component
