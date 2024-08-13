@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Container, Row, Col, Image, Nav, Table } from "react-bootstrap";
+import { Container, Row, Col, Image, Nav, Table, Card } from "react-bootstrap";
 import {
   getAllCampaigns,
   getDonorCampaigns,
@@ -13,7 +13,6 @@ import MyDonations from "../../components/Donor/MyDonations";
 import CompletedCampaigns from "../../components/Donor/CompletedCampaigns";
 import DonationsReport from "../../components/Charity/DonationsReport";
 
-// DonorDashboard component
 const DonorDashboard = ({ donor }) => {
   const {
     id,
@@ -33,78 +32,42 @@ const DonorDashboard = ({ donor }) => {
   const [hoveredTab, setHoveredTab] = useState(null);
   const [selectedTab, setSelectedTab] = useState("current");
 
-  const handleMouseEnter = (tab) => {
-    setHoveredTab(tab);
-  };
-
-  const handleMouseLeave = () => {
-    setHoveredTab(null);
-  };
-
-  const handleTabClick = (tab) => {
-    setSelectedTab(tab);
-  };
+  const handleMouseEnter = (tab) => setHoveredTab(tab);
+  const handleMouseLeave = () => setHoveredTab(null);
+  const handleTabClick = (tab) => setSelectedTab(tab);
 
   const fetchCampaigns = async () => {
     try {
       const response = await getAllCampaigns();
-      if (response.Ok && Array.isArray(response.Ok)) {
-        setCampaigns(response.Ok); // Extract campaigns from Ok
-      } else {
-        console.error("Expected an array but received:", response);
-        setCampaigns([]); // Set an empty array if the response is not as expected
-      }
+      setCampaigns(response.Ok || []);
     } catch (error) {
-      console.error("Failed to fetch campaigns", error);
-      setCampaigns([]); // Handle fetch failure gracefully
+      setCampaigns([]);
     }
   };
 
   const fetchDonorCampaigns = async () => {
     try {
-      const donorId = donor.id; // Use the donor ID
-      const response = await getDonorCampaigns(donorId); // Pass donorId here
-      console.log("Donor Campaigns Response:", response); // Verify response
-      if (response.Ok && Array.isArray(response.Ok)) {
-        setAcceptedDonations(response.Ok);
-      } else {
-        console.error("Expected an array but received:", response);
-        setAcceptedDonations([]);
-      }
+      const response = await getDonorCampaigns(donor.id);
+      setAcceptedDonations(response.Ok || []);
     } catch (error) {
-      console.error("Failed to fetch accepted donations", error);
       setAcceptedDonations([]);
     }
   };
 
   const fetchDonorDonations = async () => {
     try {
-      const donorId = donor.id;
-      const response = await getDonorDonations(donorId);
-      console.log("Donor Donations Response:", response);
-      if (response.Ok && Array.isArray(response.Ok)) {
-        setMyDonations(response.Ok); // Set myDonations state here
-      } else {
-        console.error("Expected an array but received:", response);
-        setMyDonations([]); // Handle response error here
-      }
+      const response = await getDonorDonations(donor.id);
+      setMyDonations(response.Ok || []);
     } catch (error) {
-      console.error("Failed to fetch donor donations", error);
-      setMyDonations([]); // Handle fetch failure gracefully
+      setMyDonations([]);
     }
   };
 
   const fetchCompletedCampaigns = async () => {
     try {
       const response = await getCompletedCampaigns();
-      if (response.Ok && Array.isArray(response.Ok)) {
-        setCompletedCampaigns(response.Ok);
-      } else {
-        console.error("Expected an array but received:", response);
-        setCompletedCampaigns([]);
-      }
+      setCompletedCampaigns(response.Ok || []);
     } catch (error) {
-      console.error("Failed to fetch completed campaigns", error);
       setCompletedCampaigns([]);
     }
   };
@@ -112,19 +75,12 @@ const DonorDashboard = ({ donor }) => {
   const fetchDonationsReport = async () => {
     try {
       const response = await getAllDonationReports();
-      if (response.Ok && Array.isArray(response.Ok)) {
-        setDonationReports(response.Ok);
-      } else {
-        console.error("Expected an array but received:", response);
-        setDonationReports([]);
-      }
+      setDonationReports(response.Ok || []);
     } catch (error) {
-      console.error("Failed to fetch donation reports", error);
       setDonationReports([]);
     }
   };
 
-  // Fetch data on component mount
   useEffect(() => {
     fetchCampaigns();
     fetchDonorCampaigns();
@@ -133,26 +89,27 @@ const DonorDashboard = ({ donor }) => {
     fetchDonationsReport();
   }, []);
 
-  // Dynamic styling function for nav links
   const navLinkStyle = (tab) => ({
-    color: selectedTab === tab || hoveredTab === tab ? "#ffffff" : "black",
+    color: selectedTab === tab || hoveredTab === tab ? "#ffffff" : "#000",
     backgroundColor:
-      selectedTab === tab || hoveredTab === tab ? "#007bff" : "grey",
+      selectedTab === tab || hoveredTab === tab ? "#007bff" : "lightgrey",
+    borderRadius: "20px",
+    padding: "10px 20px",
   });
 
   return (
     <div className="mx-5">
-      <Container className="mt-2">
-        <h1>Donor Dashboard</h1>
+      <Container className="mt-4">
+        <h1 className="text-center mb-4">Donor Dashboard</h1>
         <Row
-          className="d-flex justify-content-center align-items-center p-2"
+          className="justify-content-center align-items-center p-4"
           style={{
-            backgroundColor: "gray",
+            backgroundColor: "#f8f9fa",
             borderRadius: "20px",
-            boxShadow: "0 4px 6px rgba(0, 0, 0, 0.1)",
+            boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
           }}
         >
-          <Col className="flex-1">
+          <Col md="auto" className="text-center">
             <Image
               src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-chat/ava3.webp"
               alt="avatar"
@@ -160,215 +117,176 @@ const DonorDashboard = ({ donor }) => {
               style={{ width: "150px" }}
             />
           </Col>
-          <Col className="flex-1">
-            <h3>{name}</h3>
+          <Col md="auto" className="text-center">
+            <h3 className="mb-3">{name}</h3>
             <p>Email: {email}</p>
             <p>Phone: {phoneNumber}</p>
             <p>Address: {address}</p>
-            <p>Donation Amount: {donationAmount}</p>
+            <p>Total Donation: ${donationAmount}</p>
             <p>Donations Count: {donationsCount}</p>
           </Col>
         </Row>
 
-        <Container fluid className="mt-3">
-          <Nav
-            variant="pills"
-            defaultActiveKey="#current"
-            className="justify-content-center"
-          >
-            <Nav.Item className="mx-3">
-              <Nav.Link
-                onClick={() => handleTabClick("current")}
-                active={selectedTab === "current"}
-                onMouseEnter={() => handleMouseEnter("current")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("current")}
-              >
-                Current Campaigns
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item className="mx-3">
-              <Nav.Link
-                onClick={() => handleTabClick("acceptedCampaigns")}
-                active={selectedTab === "acceptedCampaigns"}
-                onMouseEnter={() => handleMouseEnter("acceptedCampaigns")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("acceptedCampaigns")}
-              >
-                Accepted Campaigns
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item className="mx-3">
-              <Nav.Link
-                onClick={() => handleTabClick("all")}
-                active={selectedTab === "all"}
-                onMouseEnter={() => handleMouseEnter("all")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("all")}
-              >
-                My Donations
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item className="mx-3">
-              <Nav.Link
-                onClick={() => handleTabClick("complete")}
-                active={selectedTab === "complete"}
-                onMouseEnter={() => handleMouseEnter("complete")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("complete")}
-              >
-                Completed Campaigns
-              </Nav.Link>
-            </Nav.Item>
-            <Nav.Item className="mx-3">
-              <Nav.Link
-                onClick={() => handleTabClick("accepted")}
-                active={selectedTab === "accepted"}
-                onMouseEnter={() => handleMouseEnter("accepted")}
-                onMouseLeave={handleMouseLeave}
-                style={navLinkStyle("accepted")}
-              >
-                View Donations Report
-              </Nav.Link>
-            </Nav.Item>
+        <Container fluid className="mt-4">
+          <Nav variant="pills" className="justify-content-center mb-4">
+            {[
+              { name: "Current Campaigns", tab: "current" },
+              { name: "Accepted Campaigns", tab: "acceptedCampaigns" },
+              { name: "My Donations", tab: "all" },
+              { name: "Completed Campaigns", tab: "complete" },
+              { name: "Donations Report", tab: "accepted" },
+            ].map(({ name, tab }) => (
+              <Nav.Item key={tab} className="mx-3">
+                <Nav.Link
+                  onClick={() => handleTabClick(tab)}
+                  active={selectedTab === tab}
+                  onMouseEnter={() => handleMouseEnter(tab)}
+                  onMouseLeave={handleMouseLeave}
+                  style={navLinkStyle(tab)}
+                >
+                  {name}
+                </Nav.Link>
+              </Nav.Item>
+            ))}
           </Nav>
         </Container>
+
         <Row className="mx-2 my-4">
           {selectedTab === "current" && (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>CampaignId</th>
-                  <th>CharityId</th>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>TargetAmount</th>
-                  <th>TotalReceived</th>
-                  <th>Donors</th>
-                  <th>Status</th>
-                  <th>StartedAt</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-
-              {campaigns.map((_campaign, index) => {
-                return (
+            <Card className="p-3">
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>CampaignId</th>
+                    <th>CharityId</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Target Amount</th>
+                    <th>Total Received</th>
+                    <th>Donors</th>
+                    <th>Status</th>
+                    <th>Started At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                {campaigns.map((_campaign, index) => (
                   <CurrrentCampaigns
                     key={index}
-                    campaign={{ ..._campaign }}
+                    campaign={_campaign}
                     donorId={id}
                     getAllCampaigns={fetchCampaigns}
                   />
-                );
-              })}
-            </Table>
+                ))}
+              </Table>
+            </Card>
           )}
 
           {selectedTab === "acceptedCampaigns" && (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>CampaignId</th>
-                  <th>CharityId</th>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>TargetAmount</th>
-                  <th>TotalReceived</th>
-                  <th>Donors</th>
-                  <th>Status</th>
-                  <th>StartedAt</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              {acceptedDonations.map((_campaign, index) => (
-                <AcceptedCampaigns
-                  key={index}
-                  acceptedCampaign={{ ..._campaign }}
-                  donorId={id}
-                  // getDonorCampaigns={fetchDonorCampaigns}
-                />
-              ))}
-            </Table>
+            <Card className="p-3">
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>CampaignId</th>
+                    <th>CharityId</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Target Amount</th>
+                    <th>Total Received</th>
+                    <th>Donors</th>
+                    <th>Status</th>
+                    <th>Started At</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+
+                {acceptedDonations.map((_campaign, index) => (
+                  <AcceptedCampaigns
+                    key={index}
+                    acceptedCampaign={_campaign}
+                    donorId={id}
+                  />
+                ))}
+              </Table>
+            </Card>
           )}
 
           {selectedTab === "accepted" && (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>Id</th>
-                  <th>DonorId</th>
-                  <th>CharityId</th>
-                  <th>CampaignId</th>
-                  <th>CampaignTitle</th>
-                  <th>Amount</th>
-                  <th>createdAt</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              {donationReports.map((_donation, index) => {
-                return (
-                  <DonationsReport
-                    key={index}
-                    donations={{ ..._donation }}
-                  />
-                );
-              })}
-            </Table>
+            <Card className="p-3">
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Id</th>
+                    <th>DonorId</th>
+                    <th>CharityId</th>
+                    <th>CampaignId</th>
+                    <th>Campaign Title</th>
+                    <th>Amount</th>
+                    <th>Created At</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+
+                {donationReports.map((_donation, index) => (
+                  <DonationsReport key={index} donations={_donation} />
+                ))}
+              </Table>
+            </Card>
           )}
 
           {selectedTab === "complete" && (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>CampaignId</th>
-                  <th>CharityId</th>
-                  <th>Title</th>
-                  <th>Description</th>
-                  <th>TargetAmount</th>
-                  <th>TotalReceived</th>
-                  <th>Donors</th>
-                  <th>Status</th>
-                  <th>StartedAt</th>
-                </tr>
-              </thead>
-              {completedCampaigns.map((_campaign, index) => {
-                return (
+            <Card className="p-3">
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>CampaignId</th>
+                    <th>CharityId</th>
+                    <th>Title</th>
+                    <th>Description</th>
+                    <th>Target Amount</th>
+                    <th>Total Received</th>
+                    <th>Donors</th>
+                    <th>Status</th>
+                    <th>Started At</th>
+                  </tr>
+                </thead>
+
+                {completedCampaigns.map((_campaign, index) => (
                   <CompletedCampaigns
                     key={index}
-                    campaign={{ ..._campaign }}
+                    campaign={_campaign}
                     getCompletedCampaigns={fetchCompletedCampaigns}
                   />
-                );
-              })}
-            </Table>
+                ))}
+              </Table>
+            </Card>
           )}
 
           {selectedTab === "all" && (
-            <Table striped bordered hover responsive>
-              <thead>
-                <tr>
-                  <th>Donation Id</th>
-                  <th>DonorId</th>
-                  <th>CharityId</th>
-                  <th>CampaignId</th>
-                  <th>Receiver</th>
-                  <th>Amount</th>
-                  <th>PaidAt</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+            <Card className="p-3">
+              <Table striped bordered hover responsive>
+                <thead>
+                  <tr>
+                    <th>Donation Id</th>
+                    <th>DonorId</th>
+                    <th>CharityId</th>
+                    <th>CampaignId</th>
+                    <th>Receiver</th>
+                    <th>Amount</th>
+                    <th>Paid At</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
 
-              {myDonations.map((_donation, index) => {
-                return (
+                {myDonations.map((_donation, index) => (
                   <MyDonations
                     key={index}
-                    donations={{ ..._donation }}
+                    donations={_donation}
                     donorId={id}
                     getDonorDonations={fetchDonorDonations}
                   />
-                );
-              })}
-            </Table>
+                ))}
+              </Table>
+            </Card>
           )}
         </Row>
       </Container>
