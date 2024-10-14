@@ -1,12 +1,37 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button, Modal, Alert, Spinner } from "react-bootstrap";
-import { acceptCampaign } from "../../utils/donorFund"; // Ensure this is correctly imported
+import { acceptCampaign, getCampaignStatusForDonor } from "../../utils/donorFund";
 
 const AcceptDonation = ({ campaignId, donorId }) => {
   const [show, setShow] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
+  const [isAccepted, setIsAccepted] = useState(false);
+
+  const fetchCampaignStatusForDonor = async () => {
+    try {
+      const response = await getCampaignStatusForDonor(campaignId, donorId);
+      if (response.Ok && response.Ok.isAccepted) {
+        setIsAccepted(true);
+        localStorage.setItem(`campaign_${campaignId}_donor_${donorId}_accepted`, "true");
+      }
+    } catch (error) {
+      console.error("Error fetching campaign status for donor:", error);
+    }
+  };
+
+  useEffect(() => {
+    if (campaignId && donorId) {
+      // Check local storage first
+      const accepted = localStorage.getItem(`campaign_${campaignId}_donor_${donorId}_accepted`);
+      if (accepted === "true") {
+        setIsAccepted(true);
+      } else {
+        fetchCampaignStatusForDonor();
+      }
+    }
+  }, [campaignId, donorId]);
 
   const handleAcceptCampaign = async () => {
     if (!donorId || !campaignId) {
@@ -22,11 +47,13 @@ const AcceptDonation = ({ campaignId, donorId }) => {
       setError(null);
       setSuccess(null);
 
-      // Call the acceptCampaign function
       const response = await acceptCampaign(donorId, campaignId);
+      console.log("API Response:", response);
+
       if (response.Ok) {
         setSuccess("Campaign accepted successfully!");
-        // Optionally refresh or update the state if needed
+        setIsAccepted(true);
+        localStorage.setItem(`campaign_${campaignId}_donor_${donorId}_accepted`, "true");
       } else if (response.Err) {
         console.error("Error accepting campaign:", response.Err);
         setError(`Failed to accept campaign: ${response.Err.NotFound || response.Err.Error}`);
@@ -39,14 +66,13 @@ const AcceptDonation = ({ campaignId, donorId }) => {
     }
   };
 
-  // Handle modal visibility
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
 
   return (
     <>
-      <Button variant="primary" size="sm" onClick={handleShow}>
-        {loading ? <Spinner animation="border" size="sm" /> : "Accept"}
+      <Button variant="primary" size="sm" onClick={handleShow} disabled={isAccepted}>
+        {loading ? <Spinner animation="border" size="sm" /> : isAccepted ? "Accepted" : "Accept"}
       </Button>
 
       <Modal show={show} onHide={handleClose}>
@@ -65,7 +91,7 @@ const AcceptDonation = ({ campaignId, donorId }) => {
           <Button
             variant="success"
             onClick={handleAcceptCampaign}
-            disabled={loading || success}
+            disabled={loading || isAccepted}
           >
             {loading ? <Spinner animation="border" size="sm" /> : "Accept Campaign"}
           </Button>

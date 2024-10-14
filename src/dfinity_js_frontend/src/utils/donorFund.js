@@ -56,6 +56,14 @@ export async function getDonorCampaigns(donorId) {
   return window.canister.farmWorkChain.getDonorCampaigns(donorId);
 }
 
+// getCampaignStatusForDonor
+export async function getCampaignStatusForDonor(donorId, campaignId) {
+  return window.canister.farmWorkChain.getCampaignStatusForDonor(
+    donorId,
+    campaignId
+  );
+}
+
 // acceptCampaign
 export async function acceptCampaign(donorId, campaignId) {
   try {
