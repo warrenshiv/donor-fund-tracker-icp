@@ -893,11 +893,27 @@ export default Canister({
       const donor = donorProfileOpt.Some;
       donor.donationAmount += reservePrice;
 
-      // Update the campaign's totalReceived
-      const updatedCampaign = {
-        ...campaign,
-        totalReceived: campaign.totalReceived + reservePrice,
-      };
+      // // Update the campaign's totalReceived
+      // const updatedCampaign = {
+      //   ...campaign,
+      //   totalReceived: campaign.totalReceived + reservePrice,
+      // };
+
+      // Update the campaign's totalReceived and update the campaign status to Completed if the target amount is reached
+      let updatedCampaign;
+
+      if (campaign.totalReceived + reservePrice >= campaign.targetAmount) {
+        updatedCampaign = {
+          ...campaign,
+          totalReceived: campaign.totalReceived + reservePrice,
+          status: { Completed: "Completed" },
+        };
+      } else {
+        updatedCampaign = {
+          ...campaign,
+          totalReceived: campaign.totalReceived + reservePrice,
+        };
+      }
 
       // Persist the changes
       donorProfileStorage.insert(donor.id, donor);
@@ -930,7 +946,6 @@ export default Canister({
   getAddressFromPrincipal: query([Principal], text, (principal) => {
     return hexAddressFromPrincipal(principal, 0);
   }),
-
   // Function to get all Donations with error handling
   getAllDonations: query([], Result(Vec(Donation), Message), () => {
     const donations = persistedReserves.values();
