@@ -1,13 +1,13 @@
-import React from "react"; // Import React
+import React, { useState } from "react";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import PayDonationButton from "../../components/Donor/PayDonation";
+import { Modal, Button, Form, Spinner } from "react-bootstrap";
 import { payDonation } from "../../utils/donorFund";
 
 const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
-  // Destructure properties from acceptedCampaign
   const {
-    id,
+    id: campaignId,
     charityId,
     title,
     description,
@@ -18,7 +18,11 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
     status,
   } = acceptedCampaign;
 
-  // Helper function to display the status of a campaign
+  const [showModal, setShowModal] = useState(false);
+  const [donationAmount, setDonationAmount] = useState("");
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Display campaign status
   const displayStatus = (status) => {
     if (status && typeof status === "object") {
       return `${Object.keys(status)[0]}: ${Object.values(status)[0]}`;
@@ -27,45 +31,31 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
     }
   };
 
-  // Helper function to format numbers with commas
-  const formatNumber = (number) => {
-    return number.toLocaleString();
-  };
+  const formatNumber = (number) => number.toLocaleString();
+  const formatDateTime = (dateTimeString) => new Date(dateTimeString).toLocaleString();
 
-  // Function to format date and time
-  const formatDateTime = (dateTimeString) => {
-    const date = new Date(dateTimeString);
-    return date.toLocaleString();
-  };
-
-  // Ensure the amount is in the correct format
-  const amount = targetAmount;
-
-  // Log the amount for debugging
-  console.log("Amount to be donated (as integer):", amount);
-  console.log("This is Donor Id :", donorId);
-
-  // Handle donation payment
-  const campaignId = id;
+  // Handle donation with modal input
   const handleDonate = async () => {
+    const amountS = BigInt(parseInt(donationAmount, 10) * 10 ** 8);
 
-    const amntStr = amount;
-    const amountSB = parseInt(amntStr, 10) * 10**8;
-    const amountS = BigInt(amountSB);
-    console.log("Print AmountStr :", amountS);
+    if (!amountS || amountS <= 0) {
+      toast.error("Please enter a valid donation amount.");
+      return;
+    }
+
+    setIsProcessing(true);
+
     try {
-      console.log(
-        "Donating to campaign and charity with ids respectively: ",
-        campaignId,
-        charityId
-      );
-      await payDonation({donorId, campaignId, charityId, amountS}).then(async (res) => {
+      await payDonation({ donorId, campaignId, charityId, amountS }).then((res) => {
         console.log("Donation successful: ", res);
         toast.success("Donation successful!");
       });
     } catch (err) {
       console.error("Check if wallet is funded", err);
       toast.error("Payment failed. Please check if the wallet is funded.");
+    } finally {
+      setIsProcessing(false);
+      setShowModal(false);
     }
   };
 
@@ -74,7 +64,7 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
       <ToastContainer />
       <tbody>
         <tr>
-          <td>{id}</td>
+          <td>{campaignId}</td>
           <td>{charityId}</td>
           <td>{title}</td>
           <td>{description}</td>
@@ -84,10 +74,38 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>
           <td>
-            <PayDonationButton donate={handleDonate} />
+            <PayDonationButton donate={() => setShowModal(true)} />
           </td>
         </tr>
       </tbody>
+
+      {/* Donation Modal */}
+      <Modal show={showModal} onHide={() => setShowModal(false)} centered>
+        <Modal.Header closeButton>
+          <Modal.Title>💰 Enter Donation Amount</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Form>
+            <Form.Group>
+              <Form.Label>Amount to Donate (in tokens):</Form.Label>
+              <Form.Control
+                type="number"
+                value={donationAmount}
+                onChange={(e) => setDonationAmount(e.target.value)}
+                placeholder="Enter donation amount"
+              />
+            </Form.Group>
+          </Form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="outline-secondary" onClick={() => setShowModal(false)} disabled={isProcessing}>
+            Cancel
+          </Button>
+          <Button variant="success" onClick={handleDonate} disabled={isProcessing}>
+            {isProcessing ? <Spinner animation="border" size="sm" /> : "Donate"}
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 };
