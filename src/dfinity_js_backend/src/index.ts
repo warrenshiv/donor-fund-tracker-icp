@@ -867,6 +867,18 @@ export default Canister({
         });
       }
       const reserve = pendingReserveOpt.Some;
+
+      // Update the Total Received amount for the charity in the campaign
+      const campaignOpt = campaignStorage.get(reserve.campaignId);
+
+      if ("None" in campaignOpt) {
+        return Err({
+          NotFound: `Cannot complete the donation reserve: Campaign with id=${reserve.campaignId} not found`,
+        });
+      }
+
+      const campaign = campaignOpt.Some;
+
       const updatedReserve = {
         ...reserve,
         status: { Completed: "COMPLETED" },
@@ -877,10 +889,21 @@ export default Canister({
       if ("None" in donorProfileOpt) {
         throw Error(`Donor with id=${donorId} not found`);
       }
+
       const donor = donorProfileOpt.Some;
       donor.donationAmount += reservePrice;
+
+      // Update the campaign's totalReceived
+      const updatedCampaign = {
+        ...campaign,
+        totalReceived: campaign.totalReceived + reservePrice,
+      };
+
+      // Persist the changes
       donorProfileStorage.insert(donor.id, donor);
+      campaignStorage.insert(updatedCampaign.id, updatedCampaign);
       persistedReserves.insert(ic.caller(), updatedReserve);
+
       return Ok(updatedReserve);
     }
   ),

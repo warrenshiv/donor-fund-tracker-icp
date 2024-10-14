@@ -37,6 +37,12 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
     return date.toLocaleString();
   };
 
+  const convertToTokens = (amount) => {
+    return Number(amount) / 10 ** 8;
+  };
+
+  const totalReceivedInICP = convertToTokens(totalReceived);
+
   return (
     <>
       <ToastContainer />
@@ -45,8 +51,8 @@ const AcceptedCampaigns = ({ acceptedCampaign }) => {
         <td>{charityId}</td>
         <td>{title}</td>
         <td>{description}</td>
-        <td>{formatNumber(targetAmount)}</td>
-        <td>{formatNumber(totalReceived)}</td>
+        <td>{formatNumber(targetAmount)} ICP</td>
+        <td>{formatNumber(totalReceivedInICP)} ICP</td>
         <td>{donors.length}</td>
         <td>{displayStatus(status)}</td>
         <td>{formatDateTime(startedAt)}</td>

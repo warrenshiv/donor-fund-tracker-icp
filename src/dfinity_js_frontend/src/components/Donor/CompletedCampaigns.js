@@ -31,6 +31,12 @@ const CompletedCampaigns = ({ campaign }) => {
     return date.toLocaleString(); // This will format date and time based on user's locale
   };
 
+  const convertToTokens = (amount) => {
+    return Number(amount) / 10 ** 8;
+  };
+
+  const totalReceivedInICP = convertToTokens(totalReceived);
+
   // Save the report
   const saveReport = async (report) => {
     try {
@@ -71,7 +77,7 @@ const CompletedCampaigns = ({ campaign }) => {
           <td>{title}</td>
           <td>{description}</td>
           <td>{targetAmount.toString()} ICP</td>
-          <td>{formatNumber(totalReceived)}</td>
+          <td>{formatNumber(totalReceivedInICP)} ICP</td>
           <td>{donors.length}</td>
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>

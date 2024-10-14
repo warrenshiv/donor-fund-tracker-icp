@@ -32,11 +32,21 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
   };
 
   const formatNumber = (number) => number.toLocaleString();
-  const formatDateTime = (dateTimeString) => new Date(dateTimeString).toLocaleString();
+  const formatDateTime = (dateTimeString) =>
+    new Date(dateTimeString).toLocaleString();
+
+  const convertToTokens = (amount) => {
+    return Number(amount) / 10 ** 8;
+  };
+
+  const totalReceivedInICP = convertToTokens(totalReceived);
 
   // Handle donation with modal input
   const handleDonate = async () => {
     const amountS = BigInt(parseInt(donationAmount, 10) * 10 ** 8);
+
+    // Log the donation amount
+    console.log("Donation amount: ", amountS);
 
     if (!amountS || amountS <= 0) {
       toast.error("Please enter a valid donation amount.");
@@ -46,10 +56,12 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
     setIsProcessing(true);
 
     try {
-      await payDonation({ donorId, campaignId, charityId, amountS }).then((res) => {
-        console.log("Donation successful: ", res);
-        toast.success("Donation successful!");
-      });
+      await payDonation({ donorId, campaignId, charityId, amountS }).then(
+        (res) => {
+          console.log("Donation successful: ", res);
+          toast.success("Donation successful!");
+        }
+      );
     } catch (err) {
       console.error("Check if wallet is funded", err);
       toast.error("Payment failed. Please check if the wallet is funded.");
@@ -69,7 +81,7 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
           <td>{title}</td>
           <td>{description}</td>
           <td>{formatNumber(targetAmount)} ICP</td>
-          <td>{formatNumber(totalReceived)} ICP</td>
+          <td>{formatNumber(totalReceivedInICP)} ICP</td>
           <td>{donors.length}</td>
           <td>{displayStatus(status)}</td>
           <td>{formatDateTime(startedAt)}</td>
@@ -98,10 +110,18 @@ const AcceptedCampaigns = ({ donorId, acceptedCampaign }) => {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="outline-secondary" onClick={() => setShowModal(false)} disabled={isProcessing}>
+          <Button
+            variant="outline-secondary"
+            onClick={() => setShowModal(false)}
+            disabled={isProcessing}
+          >
             Cancel
           </Button>
-          <Button variant="success" onClick={handleDonate} disabled={isProcessing}>
+          <Button
+            variant="success"
+            onClick={handleDonate}
+            disabled={isProcessing}
+          >
             {isProcessing ? <Spinner animation="border" size="sm" /> : "Donate"}
           </Button>
         </Modal.Footer>
