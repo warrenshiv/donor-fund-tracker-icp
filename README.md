@@ -12,7 +12,7 @@ Here's a quick demo of how the system works – click on the image below to watc
 
 ## 📊 Presentation Slides
 
-You can check out the presentation slides for this project here: [![View Presentation Slides](https://drive.google.com/uc?id=1Ki_bBceG_kK0iL1del1bmCjPtY85QiAv)](https://drive.google.com/file/d/1Ki_bBceG_kK0iL1del1bmCjPtY85QiAv/view?usp=sharing)
+You can check out the presentation slides for this project by clicking on the image: [![View Presentation Slides](https://drive.google.com/uc?id=1Ki_bBceG_kK0iL1del1bmCjPtY85QiAv)](https://drive.google.com/file/d/1Ki_bBceG_kK0iL1del1bmCjPtY85QiAv/view?usp=sharing)
 
 ## 🚀 Features
 
