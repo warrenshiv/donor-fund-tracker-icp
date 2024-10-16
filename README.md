@@ -12,7 +12,7 @@ Here's a quick demo of how the system works – click on the image below to watc
 
 ## 📊 Presentation Slides
 
-You can check out the presentation slides for this project here: [Presentation Slides](https://gamma.app/docs/A-Donor-Fund-Tracking-System-on-the-ICP-t2df8gqhmt0di1p) 📈💻
+You can check out the presentation slides for this project here: [![View Presentation Slides](https://drive.google.com/uc?id=1-BdW0ZsHQKvpAlXaHbWJpafJTqJsp-WR)](https://your-link-to-slides.com)
 
 ## 🚀 Features
 
