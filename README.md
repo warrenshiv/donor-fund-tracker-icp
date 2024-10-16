@@ -48,7 +48,7 @@ This system is designed to streamline the process of managing donations for char
 
 Here's a quick demo of how the system works:
 
-<iframe width="560" height="315" src="https://www.loom.com/share/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+<iframe width="560" height="315" src="https://www.loom.com/embed/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Things to be explained in the course:
 
