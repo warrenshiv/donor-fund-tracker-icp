@@ -6,9 +6,13 @@ This system is designed to streamline the process of managing donations for char
 
 ## 🎥 Video Demo
 
-Here's a quick demo of how the system works:
+Here's a quick demo of how the system works – click on the image below to watch! 🎥👀
 
 [![Watch the video](https://drive.google.com/uc?id=1h9YQFDNZqePd_U6irUrQX96gWNiT2ptJ)](https://www.loom.com/share/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65)
+
+## 📊 Presentation Slides
+
+You can check out the presentation slides for this project here: [Presentation Slides](https://gamma.app/docs/A-Donor-Fund-Tracking-System-on-the-ICP-t2df8gqhmt0di1p) 📈💻
 
 ## 🚀 Features
 
