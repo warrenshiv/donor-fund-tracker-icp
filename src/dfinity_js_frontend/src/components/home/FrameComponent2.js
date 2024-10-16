@@ -2,6 +2,8 @@ import React from "react";
 import TransparencyItems from "./TransparencyItems";
 import FrameComponent from "./FrameComponent";
 import styles from "./FrameComponent2.module.css";
+import * as Images from "../../assets/images";
+import { Img } from "../../components/Img";
 
 const FrameComponent2 = ({ className = "" }) => {
   return (
@@ -20,7 +22,7 @@ const FrameComponent2 = ({ className = "" }) => {
                 <TransparencyItems
                   transparency="Transparency"
                   trackEveryStepMonitorYour="Track Every Step: Monitor your donation from submission to usage with complete visibility"
-                  layersSvgrepocom="/layers-svgrepocom.svg"
+                  layersSvgrepocom={Images.imgLayersSvgrepocom}
                 />
                 <TransparencyItems
                   transparency="Real-Time Tracking"
@@ -28,7 +30,7 @@ const FrameComponent2 = ({ className = "" }) => {
                   trackEveryStepMonitorYour="Instant Updates: Get real-time notifications and updates on how your donation is making an impact."
                   propLeft1="19px"
                   propWidth="224px"
-                  layersSvgrepocom="/analytics-svgrepocom.svg"
+                  layersSvgrepocom={Images.imgAnalyticsSvgrepocom}
                 />
               </div>
               <div className={styles.howItWorksWrapper}>
@@ -43,25 +45,25 @@ const FrameComponent2 = ({ className = "" }) => {
                 technology, which offers a highly secure and tamper-proof
                 environment.
               </div>
-              <img
+              <Img
                 className={styles.windowWithSecurityBadgeSvgIcon}
                 loading="lazy"
                 alt=""
-                src="/windowwithsecuritybadge-svgrepocom.svg"
+                src={Images.imgWindowwithsecuritybadgeSvgrepocom}
               />
             </div>
           </div>
         </div>
         <div className={styles.frameWrapper1}>
           <div className={styles.frameParent2}>
-            <FrameComponent group20="/group-20@2x.png" />
+            <FrameComponent group20={Images.imgGroup20} />
             <FrameComponent
               propAlignSelf="unset"
-              group20="/group-20-1@2x.png"
+              group20={Images.imgGroup20_1}
             />
             <FrameComponent
               propAlignSelf="unset"
-              group20="/group-20-2@2x.png"
+              group20={Images.imgGroup20_2}
             />
           </div>
         </div>

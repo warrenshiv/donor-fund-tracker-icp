@@ -25,19 +25,19 @@ const NewHome = () => {
   return (
     <div className={styles.newhome}>
       <div className={styles.newhomeChild} />
-      <img className={styles.newhomeItem} alt="" src="/group-3848.svg" />
-      <img className={styles.newhomeInner} alt="" src="/group-38491@2x.png" />
-      <FrameComponent1 maskGroup="/mask-group@2x.png" />
+      <Img className={styles.newhomeItem} alt="" src={Images.imgGroup3848} />
+      <Img className={styles.newhomeInner} alt="" src={Images.imgGroup38491} />
+      <FrameComponent1 maskGroup={Images.imgMaskGroup} />
       <div className={styles.transparencyParent}>
         <b className={styles.transparency}>Transparency</b>
         <div className={styles.trackEveryStep}>
           Track Every Step: Monitor your donation from submission to usage with
           complete visibility
         </div>
-        <img
+        <Img
           className={styles.layersSvgrepocomIcon}
           alt=""
-          src="/layers-svgrepocom.svg"
+          src={Images.imgLayersSvgrepocom}
         />
       </div>
       <div className={styles.divcssS1fwqhParent}>
@@ -50,7 +50,7 @@ const NewHome = () => {
           <div className={styles.onManagingThe}>
             on managing the trauma of sexual assault
           </div>
-          <img className={styles.frameIcon} alt="" src="/frame.svg" />
+          <Img className={styles.frameIcon} alt="" src={Images.imgFrame} />
         </div>
         <Divsibling />
         <Divactive frame="/frame-3.svg" />
@@ -80,100 +80,100 @@ const NewHome = () => {
               on the benefits of his employees embracing meditation
             </p>
           </div>
-          <img className={styles.frameIcon} alt="" src="/frame.svg" />
+          <Img className={styles.frameIcon} alt="" src={Images.imgFrame} />
         </div>
         <b className={styles.testimonials}>Testimonials</b>
-        <img className={styles.svgIcon} alt="" src="/svg1.svg" />
-        <img
+        <Img className={styles.svgIcon} alt="" src={Images.imgSvg1} />
+        <Img
           className={styles.svgIcon1}
           alt=""
-          src="/svg-11.svg"
+          src={Images.imgSvg_11}
           onClick={onSvgIconClick}
         />
       </div>
       <div className={styles.frameParent}>
         <div className={styles.divcssS1fwqhGroup}>
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon}
             alt=""
-            src="/divcsss1fwqh@2x.png"
+            src={Images.imgDivcsss1fwqh}
           />
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon1}
             alt=""
-            src="/divcsss1fwqh-1@2x.png"
+            src={Images.imgDivcsss1fwqh_1}
           />
-          <img
+          <Img
             className={styles.divsiblingIcon}
             alt=""
-            src="/divsibling@2x.png"
+            src={Images.imgDivsibling}
           />
-          <img
+          <Img
             className={styles.divactiveIcon}
             alt=""
-            src="/divactive@2x.png"
+            src={Images.imgDivactive}
           />
-          <img
+          <Img
             className={styles.divsiblingIcon1}
             alt=""
-            src="/divsibling-1@2x.png"
+            src={Images.imgDivsibling_1}
           />
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon2}
             alt=""
-            src="/divcsss1fwqh-2@2x.png"
+            src={Images.imgDivcsss1fwqh_2}
           />
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon3}
             alt=""
-            src="/divcsss1fwqh-3@2x.png"
+            src={Images.imgDivcsss1fwqh_3}
           />
         </div>
         <b className={styles.testimonials1}>Testimonials</b>
-        <img className={styles.svgIcon} alt="" src="/svg1.svg" />
-        <img className={styles.svgIcon3} alt="" src="/svg-11.svg" />
+        <Img className={styles.svgIcon} alt="" src={Images.imgSvg1} />
+        <Img className={styles.svgIcon3} alt="" src={Images.imgSvg_11} />
       </div>
       <div className={styles.frameParent}>
         <div className={styles.divcssS1fwqhContainer}>
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon}
             alt=""
-            src="/divcsss1fwqh-4@2x.png"
+            src={Images.imgDivcsss1fwqh_4}
           />
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon1}
             alt=""
-            src="/divcsss1fwqh-5@2x.png"
+            src={Images.imgDivcsss1fwqh_5}
           />
-          <img
+          <Img
             className={styles.divsiblingIcon2}
             alt=""
-            src="/divsibling-2@2x.png"
+            src={Images.imgDivsibling_2}
           />
-          <img
+          <Img
             className={styles.divactiveIcon1}
             alt=""
-            src="/divactive-1@2x.png"
+            src={Images.imgDivactive_1}
           />
-          <img
+          <Img
             className={styles.divsiblingIcon3}
             alt=""
-            src="/divsibling-3@2x.png"
+            src={Images.imgDivsibling_3}
           />
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon6}
             alt=""
-            src="/divcsss1fwqh-6@2x.png"
+            src={Images.imgDivcsss1fwqh_6}
           />
-          <img
+          <Img
             className={styles.divcssS1fwqhIcon7}
             alt=""
-            src="/divcsss1fwqh-7@2x.png"
+            src={Images.imgDivcsss1fwqh_7}
           />
         </div>
         <b className={styles.testimonials1}>Testimonials</b>
-        <img className={styles.svgIcon} alt="" src="/svg1.svg" />
-        <img className={styles.svgIcon3} alt="" src="/svg-11.svg" />
+        <Img className={styles.svgIcon} alt="" src={Images.imgSvg1} />
+        <Img className={styles.svgIcon3} alt="" src={Images.imgSvg_11} />
       </div>
       <section className={styles.frameSection}>
         <div className={styles.frameContainer}>
@@ -189,7 +189,7 @@ const NewHome = () => {
               <div className={styles.onManagingThe}>
                 on managing the trauma of sexual assault
               </div>
-              <img className={styles.frameIcon} alt="" src="/frame.svg" />
+              <Img className={styles.frameIcon} alt="" src={Images.imgFrame} />
             </div>
             <Divsibling
               propTop="246.1px"
@@ -218,7 +218,7 @@ const NewHome = () => {
               <div className={styles.onFindingHer}>
                 on finding her happy place
               </div>
-              <img className={styles.frameIcon} alt="" src="/frame.svg" />
+              <Img className={styles.frameIcon} alt="" src={Images.imgFrame} />
             </div>
             <DivcssS1fwqh1
               propTop="260.5px"
@@ -235,20 +235,20 @@ const NewHome = () => {
                   on the benefits of his employees embracing meditation
                 </p>
               </div>
-              <img className={styles.frameIcon} alt="" src="/frame.svg" />
+              <Img className={styles.frameIcon} alt="" src={Images.imgFrame} />
             </div>
             <h1 className={styles.testimonials3}>Testimonials</h1>
-            <img
+            <Img
               className={styles.svgIcon6}
               alt=""
-              src="/svg1.svg"
+              src={Images.imgSvg1}
               onClick={onSvgIconClick1}
             />
-            <img className={styles.svgIcon3} alt="" src="/svg-11.svg" />
+            <Img className={styles.svgIcon3} alt="" src={Images.imgSvg_11} />
           </div>
         </div>
       </section>
-      <Footer8Dark group29="/group-29@2x.png" />
+      <Footer8Dark group29={Images.imgGroup29} />
     </div>
   );
 };

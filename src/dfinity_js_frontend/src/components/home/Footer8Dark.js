@@ -1,5 +1,7 @@
 import React from "react";
 import styles from "./Footer8Dark.module.css";
+import * as Images from "../../assets/images";
+import { Img } from "../../components/Img";
 
 const Footer8Dark = ({ className = "", group29 }) => {
   return (
@@ -13,11 +15,11 @@ const Footer8Dark = ({ className = "", group29 }) => {
           <div className={styles.frameWrapper}>
             <div className={styles.frameGroup}>
               <div className={styles.vectorWrapper}>
-                <img
+                <Img
                   className={styles.vectorIcon}
                   loading="lazy"
                   alt=""
-                  src="/vector.svg"
+                  src={Images.imgVector}
                 />
               </div>
               <h1 className={styles.fundit}>FundIt</h1>
@@ -26,11 +28,11 @@ const Footer8Dark = ({ className = "", group29 }) => {
           <div className={styles.footerLocation}>
             <div className={styles.locationParent}>
               <div className={styles.location}>
-                <img
+                <Img
                   className={styles.roundPlace24pxIcon}
                   loading="lazy"
                   alt=""
-                  src="/roundplace24px@2x.png"
+                  src={Images.imgRoundplace24px}
                 />
                 <div className={styles.faulconerDriveWrapper}>
                   <div className={styles.faulconerDrive}>
@@ -40,22 +42,22 @@ const Footer8Dark = ({ className = "", group29 }) => {
               </div>
               <div className={styles.phoneParent}>
                 <div className={styles.phone}>
-                  <img
+                  <Img
                     className={styles.roundPhone24pxIcon}
                     loading="lazy"
                     alt=""
-                    src="/roundphone24px.svg"
+                    src={Images.imgRoundphone24px}
                   />
                   <div className={styles.faulconerDriveWrapper}>
                     <div className={styles.space}>(123) 456-7890</div>
                   </div>
                 </div>
                 <div className={styles.phoneIcons}>
-                  <img
+                  <Img
                     className={styles.roundLocalPrintshop24pxIcon}
                     loading="lazy"
                     alt=""
-                    src="/roundlocalprintshop24px@2x.png"
+                    src={Images.imgRoundlocalprintshop24px}
                   />
                   <div className={styles.faulconerDriveWrapper}>
                     <div className={styles.div}>(123) 456-7890</div>
@@ -70,36 +72,36 @@ const Footer8Dark = ({ className = "", group29 }) => {
               <div className={styles.socialIcons}>
                 <div className={styles.twitterBlack1}>
                   <div className={styles.rectangle} />
-                  <img
+                  <Img
                     className={styles.twitterIcon}
                     alt=""
-                    src="/twitter.svg"
+                    src={Images.imgTwitter}
                   />
                 </div>
-                <img
+                <Img
                   className={styles.roundLocalPrintshop24pxIcon}
                   loading="lazy"
                   alt=""
-                  src="/linkedin-black1@2x.png"
+                  src={Images.imgLinkedinBlack1}
                 />
-                <img
+                <Img
                   className={styles.roundLocalPrintshop24pxIcon}
                   loading="lazy"
                   alt=""
-                  src="/youtube-color1@2x.png"
+                  src={Images.imgYoutubeColor1}
                 />
-                <img
+                <Img
                   className={styles.roundLocalPrintshop24pxIcon}
                   loading="lazy"
                   alt=""
-                  src="/instagram-black1@2x.png"
+                  src={Images.imgInstagramBlack1}
                 />
                 <img className={styles.socialIconsChild} alt="" src={group29} />
                 <img
                   className={styles.roundLocalPrintshop24pxIcon}
                   loading="lazy"
                   alt=""
-                  src="/googleplus-black1@2x.png"
+                  src={Images.imgInstagramBlack1}
                 />
               </div>
             </div>
