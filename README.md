@@ -8,7 +8,7 @@ This system is designed to streamline the process of managing donations for char
 
 Here's a quick demo of how the system works:
 
-[![Watch the video](https://drive.google.com/file/d/1h9YQFDNZqePd_U6irUrQX96gWNiT2ptJ/view?usp=sharing)](https://www.loom.com/share/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65)
+[![Watch the video](https://drive.google.com/uc?id=1h9YQFDNZqePd_U6irUrQX96gWNiT2ptJ)](https://www.loom.com/share/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65)
 
 ## 🚀 Features
 
