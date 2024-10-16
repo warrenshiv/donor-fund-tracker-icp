@@ -667,37 +667,6 @@ export default Canister({
     return Ok(campaigns);
   }),
 
-  // Function to get the campaign status for a specific donor
-  getCampaignStatusForDonor: query(
-    [text, text],
-    Result(text, Message),
-    (donorId, campaignId) => {
-      const donorProfileOpt = donorProfileStorage.get(donorId);
-      if ("None" in donorProfileOpt) {
-        return Err({
-          NotFound: `Donor with id=${donorId} not found`,
-        });
-      }
-
-      const donor = donorProfileOpt.Some;
-
-      const campaignOpt = campaignStorage.get(campaignId);
-      if ("None" in campaignOpt) {
-        return Err({
-          NotFound: `Campaign with id=${campaignId} not found`,
-        });
-      }
-
-      const campaign = campaignOpt.Some;
-
-      if (campaign.donors.includes(donorId)) {
-        return Ok("Accepted");
-      }
-
-      return Ok("Pending");
-    }
-  ),
-
   // Get campaigns accepted by the donor
   getDonorCampaigns: query(
     [text],
@@ -867,18 +836,6 @@ export default Canister({
         });
       }
       const reserve = pendingReserveOpt.Some;
-
-      // Update the Total Received amount for the charity in the campaign
-      const campaignOpt = campaignStorage.get(reserve.campaignId);
-
-      if ("None" in campaignOpt) {
-        return Err({
-          NotFound: `Cannot complete the donation reserve: Campaign with id=${reserve.campaignId} not found`,
-        });
-      }
-
-      const campaign = campaignOpt.Some;
-
       const updatedReserve = {
         ...reserve,
         status: { Completed: "COMPLETED" },
@@ -889,37 +846,10 @@ export default Canister({
       if ("None" in donorProfileOpt) {
         throw Error(`Donor with id=${donorId} not found`);
       }
-
       const donor = donorProfileOpt.Some;
       donor.donationAmount += reservePrice;
-
-      // // Update the campaign's totalReceived
-      // const updatedCampaign = {
-      //   ...campaign,
-      //   totalReceived: campaign.totalReceived + reservePrice,
-      // };
-
-      // Update the campaign's totalReceived and update the campaign status to Completed if the target amount is reached
-      let updatedCampaign;
-
-      if (campaign.totalReceived + reservePrice >= campaign.targetAmount) {
-        updatedCampaign = {
-          ...campaign,
-          totalReceived: campaign.totalReceived + reservePrice,
-          status: { Completed: "Completed" },
-        };
-      } else {
-        updatedCampaign = {
-          ...campaign,
-          totalReceived: campaign.totalReceived + reservePrice,
-        };
-      }
-
-      // Persist the changes
       donorProfileStorage.insert(donor.id, donor);
-      campaignStorage.insert(updatedCampaign.id, updatedCampaign);
       persistedReserves.insert(ic.caller(), updatedReserve);
-
       return Ok(updatedReserve);
     }
   ),
@@ -946,6 +876,7 @@ export default Canister({
   getAddressFromPrincipal: query([Principal], text, (principal) => {
     return hexAddressFromPrincipal(principal, 0);
   }),
+
   // Function to get all Donations with error handling
   getAllDonations: query([], Result(Vec(Donation), Message), () => {
     const donations = persistedReserves.values();
@@ -1049,7 +980,7 @@ export default Canister({
       return Ok(donationReport); // Successfully return the created donation report
     }
   ),
-
+ 
   // Function to get all Donation Reports with error handling
   getAllDonationReports: query([], Result(Vec(DonationReport), Message), () => {
     const donationReports = donationReportStorage.values();
