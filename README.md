@@ -4,6 +4,12 @@
 
 This system is designed to streamline the process of managing donations for charitable organizations. It provides a comprehensive platform where donor and charity profiles can be created, managed, and tracked efficiently. The system enables charities to run campaigns, accept donations, and generate reports on donation activities. Donors can create profiles, track their donation history, and participate in various charity campaigns.
 
+## 🎥 Video Demo
+
+Here's a quick demo of how the system works:
+
+[![Watch the video](https://drive.google.com/file/d/1h9YQFDNZqePd_U6irUrQX96gWNiT2ptJ/view?usp=sharing)](https://www.loom.com/share/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65)
+
 ## 🚀 Features
 
 ### 👤 Donor Profile Management
@@ -43,12 +49,6 @@ This system is designed to streamline the process of managing donations for char
 - ⏳ **Track** the status of campaigns, including pending, accepted, completed, and cancelled campaigns.
 - 🏁 **Mark campaigns as completed** when fundraising goals are achieved or the campaign period ends.
 - 🔍 **Retrieve** all accepted or completed campaigns for monitoring and analysis.
-
-## 🎥 Video Demo
-
-Here's a quick demo of how the system works:
-
-<iframe width="560" height="315" src="https://www.loom.com/embed/d174f96623224713834ecaab27b1ba6a?sid=817873e7-3bbd-4ad1-ac20-4e727c1d0f65" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
 
 ## Things to be explained in the course:
 
