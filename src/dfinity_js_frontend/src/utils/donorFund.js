@@ -111,6 +111,17 @@ export async function createDonationReport(report) {
   return window.canister.farmWorkChain.createDonationReport(report);
 }
 
+// getAddressFromPrincipal
+export async function getAddressFromPrincipal(principalId) {
+  try {
+    const principal = Principal.fromText(principalId);
+    return window.canister.farmWorkChain.getAddressFromPrincipal(principal);
+  } catch (error) {
+    console.error("Error creating Principal:", error);
+    throw new Error("Invalid principal format");
+  }
+}
+
 // Pay Donation
 export async function payDonation(donation) {
   const donationCanister = window.canister.farmWorkChain;

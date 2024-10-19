@@ -2,10 +2,9 @@ import React, { useCallback, useEffect, useState } from "react";
 import { Dropdown, Stack } from "react-bootstrap";
 import { logout as destroy } from "../utils/auth";
 import { balance as principalBalance } from "../utils/ledger";
-
+import { getAddressFromPrincipal } from "../utils/donorFund";
 
 const Wallet = () => {
-
   const isAuthenticated = window.auth.isAuthenticated;
 
   const principal = window.auth.principalText;
@@ -13,6 +12,7 @@ const Wallet = () => {
   const symbol = "ICP";
 
   const [balance, setBalance] = useState("0");
+  const [address, setAddress] = useState("");
 
   const getBalance = useCallback(async () => {
     if (isAuthenticated) {
@@ -23,6 +23,21 @@ const Wallet = () => {
   useEffect(() => {
     getBalance();
   }, [getBalance]);
+
+  // Get the address of the investor
+  useEffect(() => {
+    const getAddress = async () => {
+      if (isAuthenticated && principal) {
+        try {
+          const address = await getAddressFromPrincipal(principal);
+          setAddress(address);
+        } catch (error) {
+          console.error("Error getting address:", error);
+        }
+      }
+    };
+    getAddress();
+  }, [isAuthenticated, principal]);
 
   if (isAuthenticated) {
     return (
@@ -41,7 +56,7 @@ const Wallet = () => {
             <Dropdown.Item>
               <Stack direction="horizontal" gap={2}>
                 <i className="bi bi-person-circle fs-4" />
-                <span className="font-monospace">{principal}</span>
+                <span className="font-monospace">{address}</span>
               </Stack>
             </Dropdown.Item>
 
